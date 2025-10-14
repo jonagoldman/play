@@ -11,8 +11,8 @@ return [
     'model_unguard' => false,
     'model_strict' => true,
     'model_automatic_eager_load_relationships' => true,
-    'default_string_length' => 190,
-    'default_morph_key_type' => 'ulid',
     'prohibit_destructive_commands' => true,
     'set_default_passwords' => true,
+    'default_string_length' => 255,
+    'default_morph_key_type' => 'int',
 ];
