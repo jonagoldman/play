@@ -1,0 +1,11 @@
+name: play
+type: laravel
+docroot: public
+webserver_type: nginx-fpm
+php_version: "8.4"
+timezone: UTC
+database:
+    type: mariadb
+    version: "11.8"
+host_db_port: "32797"
+nodejs_version: "24"
