@@ -1,0 +1,7 @@
+nodeLinker: isolated
+
+shamefullyHoist: true
+
+strictPeerDependencies: false
+
+storeDir: ~/.local/share/pnpm/store
