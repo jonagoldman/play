@@ -1,0 +1,24 @@
+{
+    "recommendations": [
+        "BeardedBear.beardedicons",
+        "edwinhuish.better-comments-next",
+        "kennylong.kubernetes-yaml-formatter",
+        "ms-azuretools.vscode-containers",
+        "biati.ddev-manager",
+        "mikestead.dotenv",
+        "dbaeumer.vscode-eslint",
+        "mhutchie.git-graph",
+        "laravel.vscode-laravel",
+        "atomiks.moonlight",
+        "ahmadalli.vscode-nginx-conf",
+        "xdebug.php-debug",
+        "neilbrayfield.php-docblocker",
+        "bmewburn.vscode-intelephense-client",
+        "MehediDracula.php-namespace-resolver",
+        "hyperoot.settings-organizer",
+        "qwtel.sqlite-viewer",
+        "bradlc.vscode-tailwindcss",
+        "pflannery.vscode-versionlens",
+        "Vue.volar"
+    ]
+}
