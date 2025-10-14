@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24e07cfdc565f398c0fed308d6d7c4ad",
+    "content-hash": "3cd39ed00aa8e75908a2486b6cb972b7",
     "packages": [
         {
             "name": "brick/math",
@@ -1052,6 +1052,46 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "jonagoldman/laravel-essentials",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/jonagoldman/laravel-essentials",
+                "reference": "ae2afc521f3e9b93b9310bf812bd8d85303d42f2"
+            },
+            "require": {
+                "laravel/framework": "^12.34.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JonaGoldman\\Essentials\\EssentialsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JonaGoldman\\Essentials\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jona Goldman",
+                    "email": "jonagoldman@gmail.com"
+                }
+            ],
+            "description": "Opinionated defaults for Laravel projects.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "laravel/framework",
@@ -9301,7 +9341,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "jonagoldman/laravel-essentials": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
