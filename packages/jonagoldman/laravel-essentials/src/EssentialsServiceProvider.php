@@ -58,9 +58,10 @@ final class EssentialsServiceProvider extends ServiceProvider
 
     protected function configure(): void
     {
-        $this->settings = Settings::fromArray($this->app->make('config')->array('essentials'));
+        $this->settings = Settings::fromArray($this->app->make('config')->get('essentials'));
 
         if ($this->app->runningInConsole()) {
+
             $this->publishes([
                 __DIR__.'/../config/essentials.php' => config_path('essentials.php'),
             ], 'essentials-config');
@@ -117,7 +118,7 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Disables Laravel's mass assignment protection globally (opt-in).
          * Useful in trusted or local environments where you want to skip defining `$fillable`.
          */
-        Model::unguard($this->settings->modelUnguard);
+        Model::unguard($this->settings->unguardModel);
 
         /**
          * Improves how Eloquent handles undefined attributes, lazy loading, and invalid assignments.
@@ -128,13 +129,13 @@ final class EssentialsServiceProvider extends ServiceProvider
          *
          * Avoids subtle bugs and makes model behavior easier to reason about.
          */
-        Model::shouldBeStrict($this->settings->modelStrict);
+        Model::shouldBeStrict($this->settings->strictModel);
 
         /**
          * Automatically eager loads relationships defined in the model's `$with` property.
          * Reduces N+1 query issues and improves performance without needing `with()` everywhere.
          */
-        Model::automaticallyEagerLoadRelationships($this->settings->modelAutomaticEagerLoadRelationships);
+        Model::automaticallyEagerLoadRelationships($this->settings->automaticEagerLoadRelationships);
     }
 
     protected function configureSchemas(): void
