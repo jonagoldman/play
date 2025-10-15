@@ -6,7 +6,7 @@ namespace JonaGoldman\Essentials\Dogma\Principles;
 
 final class Principle
 {
-    public static function apply(EssentialsConfig $config): void
+    public static function apply(): void
     {
         //
     }

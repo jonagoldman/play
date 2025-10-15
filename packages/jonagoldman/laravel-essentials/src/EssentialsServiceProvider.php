@@ -26,6 +26,9 @@ final class EssentialsServiceProvider extends ServiceProvider
         $this->app->singleton('overseer', fn ($app): OverseerManager => new OverseerManager($app));
     }
 
+    /**
+     * Bootstrap any application services.
+     */
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
