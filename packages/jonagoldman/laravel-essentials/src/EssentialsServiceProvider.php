@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Sleep;
 use Illuminate\Validation\Rules\Password;
+use JonaGoldman\Essentials\Overseer\OverseerManager;
+use Override;
 
 final class EssentialsServiceProvider extends ServiceProvider
 {
@@ -23,19 +25,18 @@ final class EssentialsServiceProvider extends ServiceProvider
      */
     protected $app;
 
-    protected ?Settings $settings;
+    protected ?EssentialsConfig $config;
 
-    /**
-     * Register any application services.
-     */
+    #[Override]
     public function register(): void
     {
-        $this->registerConfig();
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/essentials.php', 'essentials'
+        );
+
+        $this->app->singleton('overseer', fn ($app): OverseerManager => new OverseerManager($app));
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         $this->configure();
@@ -49,19 +50,11 @@ final class EssentialsServiceProvider extends ServiceProvider
         $this->configurePasswords();
     }
 
-    protected function registerConfig(): void
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/../config/essentials.php', 'essentials'
-        );
-    }
-
     protected function configure(): void
     {
-        $this->settings = Settings::fromArray($this->app->make('config')->get('essentials'));
+        $this->config = EssentialsConfig::fromArray($this->app->make('config')->get('essentials'));
 
         if ($this->app->runningInConsole()) {
-
             $this->publishes([
                 __DIR__.'/../config/essentials.php' => config_path('essentials.php'),
             ], 'essentials-config');
@@ -74,13 +67,13 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Configures Laravel Sleep Facade to be faked.
          * Avoid unexpected sleep during testing cases.
          */
-        Sleep::fake($this->settings->fakeSleep);
+        Sleep::fake($this->config->fakeSleep);
 
         /**
          * Configures Laravel Http Facade to prevent stray requests.
          * Ensure every HTTP calls during tests have been explicitly faked.
          */
-        Http::preventStrayRequests($this->settings->preventStrayRequests);
+        Http::preventStrayRequests($this->config->preventStrayRequests);
     }
 
     protected function configureUrls(): void
@@ -89,7 +82,7 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Forces all generated URLs to use `https://`.
          * Ensures all traffic uses secure connections by default.
          */
-        URL::forceHttps($this->settings->forceHttps);
+        URL::forceHttps($this->config->forceHttps);
     }
 
     protected function configureVite(): void
@@ -98,7 +91,7 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Configures Laravel Vite to preload assets more aggressively.
          * Improves front-end load times and user experience.
          */
-        Vite::useAggressivePrefetching($this->settings->aggressivePrefetching);
+        Vite::useAggressivePrefetching($this->config->aggressivePrefetching);
     }
 
     protected function configureDates(): void
@@ -107,7 +100,7 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Uses `CarbonImmutable` instead of mutable date objects across your app.
          * Prevents unexpected date mutations and improves predictability.
          */
-        if ($this->settings->immutableDates) {
+        if ($this->config->immutableDates) {
             Date::use(CarbonImmutable::class);
         }
     }
@@ -118,7 +111,7 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Disables Laravel's mass assignment protection globally (opt-in).
          * Useful in trusted or local environments where you want to skip defining `$fillable`.
          */
-        Model::unguard($this->settings->unguardModel);
+        Model::unguard($this->config->unguardModel);
 
         /**
          * Improves how Eloquent handles undefined attributes, lazy loading, and invalid assignments.
@@ -129,13 +122,13 @@ final class EssentialsServiceProvider extends ServiceProvider
          *
          * Avoids subtle bugs and makes model behavior easier to reason about.
          */
-        Model::shouldBeStrict($this->settings->strictModel);
+        Model::shouldBeStrict($this->config->strictModel);
 
         /**
          * Automatically eager loads relationships defined in the model's `$with` property.
          * Reduces N+1 query issues and improves performance without needing `with()` everywhere.
          */
-        Model::automaticallyEagerLoadRelationships($this->settings->automaticEagerLoadRelationships);
+        Model::automaticallyEagerLoadRelationships($this->config->automaticEagerLoadRelationships);
     }
 
     protected function configureSchemas(): void
@@ -143,12 +136,12 @@ final class EssentialsServiceProvider extends ServiceProvider
         /**
          * Set the default string length for migrations.
          */
-        Builder::defaultStringLength($this->settings->defaultStringLength);
+        Builder::defaultStringLength($this->config->defaultStringLength);
 
         /**
          * Set the default morph key type for migrations.
          */
-        Builder::defaultMorphKeyType($this->settings->defaultMorphKeyType);
+        Builder::defaultMorphKeyType($this->config->defaultMorphKeyType);
     }
 
     protected function configureCommands(): void
@@ -157,14 +150,14 @@ final class EssentialsServiceProvider extends ServiceProvider
          * Blocks potentially destructive Artisan commands in production (e.g., `migrate:fresh`).
          * Prevents accidental data loss and adds a safety net in sensitive environments.
          */
-        DB::prohibitDestructiveCommands($this->settings->prohibitDestructiveCommands && $this->app->isProduction());
+        DB::prohibitDestructiveCommands($this->config->prohibitDestructiveCommands && $this->app->isProduction());
     }
 
     protected function configurePasswords(): void
     {
-        if ($this->settings->setDefaultPasswords) {
+        if ($this->config->setDefaultPasswords) {
             Password::defaults(function (): Password {
-                $rule = Password::min(8)->max($this->settings->defaultStringLength);
+                $rule = Password::min(8)->max($this->config->defaultStringLength);
 
                 return $this->app->isProduction()
                     ? $rule->mixedCase()->uncompromised()

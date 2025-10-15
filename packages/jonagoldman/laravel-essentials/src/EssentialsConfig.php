@@ -6,7 +6,7 @@ namespace JonaGoldman\Essentials;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-final readonly class Settings implements Arrayable
+final readonly class EssentialsConfig implements Arrayable
 {
     public function __construct(
         public bool $fakeSleep,
