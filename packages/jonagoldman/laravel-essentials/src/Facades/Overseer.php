@@ -6,10 +6,10 @@ namespace JonaGoldman\Essentials\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Inspector extends Facade
+final class Overseer extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \JonaGoldman\Essentials\Inspector::class;
+        return 'overseer';
     }
 }
