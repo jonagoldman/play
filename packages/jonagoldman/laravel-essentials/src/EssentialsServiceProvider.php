@@ -25,7 +25,7 @@ final class EssentialsServiceProvider extends ServiceProvider
      */
     protected $app;
 
-    protected ?EssentialsConfig $config;
+    private ?EssentialsConfig $config = null;
 
     #[Override]
     public function register(): void
@@ -50,7 +50,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         $this->configurePasswords();
     }
 
-    protected function configure(): void
+    private function configure(): void
     {
         $this->config = EssentialsConfig::fromArray($this->app->make('config')->get('essentials'));
 
@@ -61,7 +61,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         }
     }
 
-    protected function configureHttp(): void
+    private function configureHttp(): void
     {
         /**
          * Configures Laravel Sleep Facade to be faked.
@@ -76,7 +76,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         Http::preventStrayRequests($this->config->preventStrayRequests);
     }
 
-    protected function configureUrls(): void
+    private function configureUrls(): void
     {
         /**
          * Forces all generated URLs to use `https://`.
@@ -85,16 +85,16 @@ final class EssentialsServiceProvider extends ServiceProvider
         URL::forceHttps($this->config->forceHttps);
     }
 
-    protected function configureVite(): void
+    private function configureVite(): void
     {
         /**
          * Configures Laravel Vite to preload assets more aggressively.
          * Improves front-end load times and user experience.
          */
-        Vite::useAggressivePrefetching($this->config->aggressivePrefetching);
+        Vite::useAggressivePrefetching();
     }
 
-    protected function configureDates(): void
+    private function configureDates(): void
     {
         /**
          * Uses `CarbonImmutable` instead of mutable date objects across your app.
@@ -105,7 +105,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         }
     }
 
-    protected function configureModels(): void
+    private function configureModels(): void
     {
         /**
          * Disables Laravel's mass assignment protection globally (opt-in).
@@ -131,7 +131,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         Model::automaticallyEagerLoadRelationships($this->config->automaticEagerLoadRelationships);
     }
 
-    protected function configureSchemas(): void
+    private function configureSchemas(): void
     {
         /**
          * Set the default string length for migrations.
@@ -144,7 +144,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         Builder::defaultMorphKeyType($this->config->defaultMorphKeyType);
     }
 
-    protected function configureCommands(): void
+    private function configureCommands(): void
     {
         /**
          * Blocks potentially destructive Artisan commands in production (e.g., `migrate:fresh`).
@@ -153,7 +153,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         DB::prohibitDestructiveCommands($this->config->prohibitDestructiveCommands && $this->app->isProduction());
     }
 
-    protected function configurePasswords(): void
+    private function configurePasswords(): void
     {
         if ($this->config->setDefaultPasswords) {
             Password::defaults(function (): Password {

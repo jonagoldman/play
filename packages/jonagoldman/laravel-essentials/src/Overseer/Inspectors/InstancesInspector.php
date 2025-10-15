@@ -19,10 +19,6 @@ final class InstancesInspector
         $appReflection = new ReflectionClass($app);
         $property = $appReflection->getProperty('instances');
 
-        $data = Arr::map($property->getValue($app), function ($instance) {
-            return is_string($instance) ? $instance : get_class($instance);
-        });
-
-        return $data;
+        return Arr::map($property->getValue($app), fn($instance) => is_string($instance) ? $instance : $instance::class);
     }
 }

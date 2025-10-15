@@ -17,8 +17,7 @@ final class AliasesInspector
     {
         $appReflection = new ReflectionClass($app);
         $property = $appReflection->getProperty('abstractAliases');
-        $data = $property->getValue($app);
 
-        return $data;
+        return $property->getValue($app);
     }
 }
