@@ -17,7 +17,7 @@ use JonaGoldman\Essentials\Overseer\Inspectors\RouterInspector;
 /**
  * @implements Arrayable<array-key, mixed>
  **/
-final class OverseerManager implements Arrayable
+final readonly class OverseerManager implements Arrayable
 {
     /**
      * @param  \Illuminate\Foundation\Application  $app

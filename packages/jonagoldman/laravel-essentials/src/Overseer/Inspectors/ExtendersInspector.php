@@ -19,10 +19,6 @@ final class ExtendersInspector
         $appReflection = new ReflectionClass($app);
         $property = $appReflection->getProperty('extenders');
 
-        $data = Arr::map($property->getValue($app), function ($value) {
-            return count($value);
-        });
-
-        return $data;
+        return Arr::map($property->getValue($app), fn($value): int => count($value));
     }
 }

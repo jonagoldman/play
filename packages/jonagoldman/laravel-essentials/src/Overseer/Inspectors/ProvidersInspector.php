@@ -18,7 +18,7 @@ final class ProvidersInspector
 
         $unresolved = [...array_diff(array_keys(array_flip($app->getDeferredServices())), $registered)];
 
-        $services = array_filter($app->getDeferredServices(), fn ($provider) => in_array($provider, $unresolved));
+        $services = array_filter($app->getDeferredServices(), fn ($provider): bool => in_array($provider, $unresolved));
 
         $unresolved = array_fill_keys($unresolved, ['loaded' => false, 'deferred' => true, 'provides' => []]);
 
@@ -28,15 +28,13 @@ final class ProvidersInspector
 
         $registered = array_fill_keys($registered, ['loaded' => true, 'deferred' => false, 'provides' => []]);
 
-        foreach ($registered as $key => $value) {
+        foreach (array_keys($registered) as $key) {
             $provider = $app->getProvider($key);
 
             $registered[$key]['deferred'] = $provider->isDeferred();
             $registered[$key]['provides'] = $provider->provides();
         }
 
-        $data = array_merge($registered, $unresolved);
-
-        return $data;
+        return array_merge($registered, $unresolved);
     }
 }
