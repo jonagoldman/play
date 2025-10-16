@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JonaGoldman\Essentials\Dogma\Principles;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use JonaGoldman\Essentials\EssentialsConfig;
 
 final class ModelPrinciple
@@ -29,10 +30,16 @@ final class ModelPrinciple
         Model::shouldBeStrict($config->strictModel);
 
         /**
-         * Automatically eager loads relationships defined in the model's `$with` property.
-         * Reduces N+1 query issues and improves performance without needing `with()` everywhere.
+         * Enables automatic eager loading of relationships when models are retrieved.
+         * Reduces the N+1 query problem by loading related models upfront.
          */
         Model::automaticallyEagerLoadRelationships($config->automaticEagerLoadRelationships);
+
+        /**
+         * Enforces the use of a morph map for all polymorphic relationships.
+         * Prevents accidental exposure of class names in the database and improves security.
+         */
+        Relation::requireMorphMap($config->requireMorphMap);
     }
 
     public static function status(): array
