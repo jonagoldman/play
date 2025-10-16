@@ -16,7 +16,7 @@ final class RouterInspector
     public function inspect(Application $app): array
     {
         /** @var \Illuminate\Routing\Router */
-        $router = $app['router'];
+        $router = $app->make(\Illuminate\Routing\Router::class);
 
         /** @var \Illuminate\Routing\RouteCollection */
         $routes = $router->getRoutes();
