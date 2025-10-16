@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JonaGoldman\Essentials;
 
 use Illuminate\Support\ServiceProvider;
+use JonaGoldman\Essentials\Commands\AppVersionCommand;
 use JonaGoldman\Essentials\Dogma\DogmaManager;
 use JonaGoldman\Essentials\Overseer\OverseerManager;
 use Override;
@@ -35,6 +36,10 @@ final class EssentialsServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../config/essentials.php' => config_path('essentials.php'),
             ], 'essentials-config');
+
+            $this->commands([
+                AppVersionCommand::class,
+            ]);
         }
 
         $dogma = new DogmaManager(
