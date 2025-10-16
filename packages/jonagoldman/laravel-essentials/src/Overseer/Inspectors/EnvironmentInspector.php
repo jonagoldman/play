@@ -16,13 +16,13 @@ final class EnvironmentInspector
     public function inspect(Application $app): array
     {
         /** @var Illuminate\Support\Composer */
-        $composer = $app->make('composer');
+        $composer = $app->make(\Illuminate\Support\Composer::class);
 
         return [
             'php' => implode('.', [PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION]),
             'laravel' => $app->version(),
             'composer' => $composer->getVersion() ?? '-',
-            'database' => Str::before($app['db']->select('select version() as version')[0]->{'version'}, ' ('),
+            'database' => Str::before($app->make(\Illuminate\Database\ConnectionResolverInterface::class)->select('select version() as version')[0]->{'version'}, ' ('),
             // 'MySQL' => $this->app['db']->select('select version()')[0]->{'version()'},
         ];
     }

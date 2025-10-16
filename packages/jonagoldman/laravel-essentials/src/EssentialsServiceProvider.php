@@ -43,7 +43,7 @@ final class EssentialsServiceProvider extends ServiceProvider
         }
 
         $dogma = new DogmaManager(
-            EssentialsConfig::fromArray($this->app->make('config')->get('essentials'))
+            EssentialsConfig::fromArray($this->app->make(\Illuminate\Contracts\Config\Repository::class)->get('essentials'))
         );
 
         $dogma->apply();
