@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac363e9d5e786aa1d7fde86d27ff1d09",
+    "content-hash": "f8f1e472e7d284e79fd538548a202552",
     "packages": [
         {
             "name": "brick/math",
@@ -1059,10 +1059,10 @@
             "dist": {
                 "type": "path",
                 "url": "packages/jonagoldman/laravel-essentials",
-                "reference": "ae2afc521f3e9b93b9310bf812bd8d85303d42f2"
+                "reference": "242f26ef868473a36ad1d9880b42a9edd7bc90c7"
             },
             "require": {
-                "laravel/framework": "^12.34.0",
+                "laravel/framework": "dev-12-opinionated as 12.34.0",
                 "php": "^8.4"
             },
             "type": "library",
@@ -1095,17 +1095,11 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.34.0",
+            "version": "dev-12-opinionated",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "f9ec5a5d88bc8c468f17b59f88e05c8ac3c8d687"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/f9ec5a5d88bc8c468f17b59f88e05c8ac3c8d687",
-                "reference": "f9ec5a5d88bc8c468f17b59f88e05c8ac3c8d687",
-                "shasum": ""
+                "url": "https://github.com/jonagoldman/laravel-framework",
+                "reference": "7711fb8101eed531565c8ad94ad688a0c0fd36a7"
             },
             "require": {
                 "brick/math": "^0.11|^0.12|^0.13|^0.14",
@@ -1290,7 +1284,14 @@
                     ]
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "files": [
+                    "tests/Database/stubs/MigrationCreatorFakeMigration.php"
+                ],
+                "psr-4": {
+                    "Illuminate\\Tests\\": "tests/"
+                }
+            },
             "license": [
                 "MIT"
             ],
@@ -1310,7 +1311,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-10-14T13:58:31+00:00"
+            "time": "2025-10-16T18:03:14+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -9617,10 +9618,18 @@
             "time": "2024-03-03T12:36:25+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "laravel/framework",
+            "version": "dev-12-opinionated",
+            "alias": "12.34.0",
+            "alias_normalized": "12.34.0.0"
+        }
+    ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "jonagoldman/laravel-essentials": 20
+        "jonagoldman/laravel-essentials": 20,
+        "laravel/framework": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

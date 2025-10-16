@@ -12,8 +12,14 @@
     ],
     "require": {
         "php": "^8.4",
-        "laravel/framework": "^12.34.0"
+        "laravel/framework": "dev-12-opinionated as 12.34.0"
     },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/jonagoldman/laravel-framework"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "JonaGoldman\\Essentials\\": "src/"
