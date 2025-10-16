@@ -28,7 +28,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            $table->foreignUlid('user_id')->nullable()->constrained()->index();
+            $table->foreignUlid('user_id')->nullable()->index()->constrained();
             $table->ipAddress('ip_address')->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
