@@ -6,6 +6,8 @@ namespace JonaGoldman\Essentials;
 
 use Illuminate\Support\ServiceProvider;
 use JonaGoldman\Essentials\Commands\AppVersionCommand;
+use JonaGoldman\Essentials\Database\Commands\DbDropCommand;
+use JonaGoldman\Essentials\Database\Commands\DbMakeCommand;
 use JonaGoldman\Essentials\Dogma\DogmaManager;
 use JonaGoldman\Essentials\Overseer\OverseerManager;
 use Override;
@@ -39,6 +41,8 @@ final class EssentialsServiceProvider extends ServiceProvider
 
             $this->commands([
                 AppVersionCommand::class,
+                DbDropCommand::class,
+                DbMakeCommand::class,
             ]);
         }
 
