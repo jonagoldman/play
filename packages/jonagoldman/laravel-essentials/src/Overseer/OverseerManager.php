@@ -6,6 +6,7 @@ namespace JonaGoldman\Essentials\Overseer;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
 use JonaGoldman\Essentials\Overseer\Inspectors\AliasesInspector;
 use JonaGoldman\Essentials\Overseer\Inspectors\BindingsInspector;
 use JonaGoldman\Essentials\Overseer\Inspectors\EnvironmentInspector;
@@ -61,9 +62,9 @@ final readonly class OverseerManager implements Arrayable
         return new RouterInspector()->inspect($this->app);
     }
 
-    public function toArray(): array
+    public function inspect(): Collection
     {
-        return collect([
+        return new Collection([
             'environment' => $this->environment(),
             'providers' => $this->providers(),
             'aliases' => collect($this->aliases())->sortKeys(),
@@ -71,6 +72,11 @@ final readonly class OverseerManager implements Arrayable
             'instances' => collect($this->instances())->sortKeys(),
             'extenders' => collect($this->extenders())->sortKeys(),
             'router' => $this->router(),
-        ])->toArray();
+        ]);
+    }
+
+    public function toArray(): array
+    {
+        return $this->inspect()->toArray();
     }
 }
