@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace JonaGoldman\Essentials;
 
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Essentials\Commands\AppVersionCommand;
 use JonaGoldman\Essentials\Database\Commands\DbDropCommand;
 use JonaGoldman\Essentials\Database\Commands\DbMakeCommand;
 use JonaGoldman\Essentials\Dogma\DogmaManager;
@@ -40,7 +39,6 @@ final class EssentialsServiceProvider extends ServiceProvider
             ], 'essentials-config');
 
             $this->commands([
-                AppVersionCommand::class,
                 DbDropCommand::class,
                 DbMakeCommand::class,
             ]);
