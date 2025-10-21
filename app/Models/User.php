@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTokens;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -28,6 +27,7 @@ final class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
+    use HasTokens;
     use HasUlids;
     use Notifiable;
 
@@ -47,21 +47,6 @@ final class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
-    public function token(): ?HasOne
-    {
-        return $this->tokens()->one()->latestOfMany();
-    }
-
-    public function tokens(): HasMany
-    {
-        return $this->hasMany(Token::class);
-    }
-
-    public function tokenCan(string $ability): bool
-    {
-        return $this->relationLoaded('token') && $this->token->can($ability);
-    }
 
     protected function casts(): array
     {

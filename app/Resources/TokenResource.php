@@ -18,6 +18,9 @@ final class TokenResource extends JsonResource
             'plain' => $this->plain,
             'token' => $this->plain ? $this->getKey().'|'.$this->plain : null,
             // 'token' => $this->when($this->plain, fn () => $this->getKey().'|'.$this->plain),
+            'expires_at' => $this->expires_at->toIso8601ZuluString(),
+            'created_at' => $this->created_at->toIso8601ZuluString(),
+            'updated_at' => $this->updated_at->toIso8601ZuluString(),
         ];
     }
 }
