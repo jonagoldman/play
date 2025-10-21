@@ -21,12 +21,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // $middleware->statefulApi();
 
-        $middleware->prependToGroup('web', [
+        $middleware->appendToGroup('web', [
             UseRequestId::class,
             UseHeaderGuards::class,
         ]);
 
-        $middleware->prependToGroup('api', [
+        $middleware->appendToGroup('api', [
             UseRequestId::class,
             UseHeaderGuards::class,
         ]);
