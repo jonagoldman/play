@@ -12,9 +12,10 @@
     ],
     "require": {
         "php": "^8.4",
+        "jonagoldman/laravel-essentials": "dev-master",
         "laravel/framework": "dev-12-opinionated as 12.34.0",
         "laravel/tinker": "^2.10.1",
-        "jonagoldman/laravel-essentials": "dev-master"
+        "symfony/filesystem": "^7.3"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1",
