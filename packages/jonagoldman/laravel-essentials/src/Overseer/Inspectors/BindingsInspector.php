@@ -15,6 +15,9 @@ final class BindingsInspector
      */
     public function inspect(Application $app): array
     {
-        return Arr::map($app->getBindings(), fn($concrete, $abstract): array => ['resolved' => $app->resolved($abstract), 'singleton' => $concrete['shared']]);
+        return Arr::map($app->getBindings(), fn ($concrete, $abstract): array => [
+            'resolved' => $app->resolved($abstract),
+            'singleton' => $concrete['shared'],
+        ]);
     }
 }
