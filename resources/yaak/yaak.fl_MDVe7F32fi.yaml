@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_MDVe7F32fi
+createdAt: 2025-10-21T14:13:59.869392125
+updatedAt: 2025-10-21T14:14:02.766863674
+workspaceId: wk_Ajxvw3KJyc
+folderId: fl_eZUadkUR3T
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Tokens
+sortPriority: 5000.0

@@ -1,0 +1,26 @@
+type: workspace
+model: workspace
+id: wk_Ajxvw3KJyc
+createdAt: 2025-10-20T18:38:18.078069724
+updatedAt: 2025-10-20T18:38:45.080816803
+authentication: {}
+authenticationType: null
+description: ''
+headers:
+- enabled: true
+  name: Accept
+  value: application/json
+  id: 0P4JgcI7IV
+- enabled: true
+  name: Content-Type
+  value: application/json
+  id: 59Sez9wKeG
+- enabled: true
+  name: ''
+  value: ''
+  id: qbxVQEqkw7
+name: Play
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0

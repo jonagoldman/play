@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_3sRUhBgMZK
+createdAt: 2025-10-21T14:14:08.165261065
+updatedAt: 2025-10-21T14:24:23.477283388
+workspaceId: wk_Ajxvw3KJyc
+folderId: fl_MDVe7F32fi
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: /users/:id/tokens
+sortPriority: 0.0
+url: ${[ url ]}/users/:id/tokens
+urlParameters:
+- enabled: true
+  name: :id
+  value: 01k80zdb82ys4c1rqr3pjqfnm5
+  id: wRRhudH3qN
+- enabled: true
+  name: ''
+  value: ''
+  id: uaq8BnA92y
