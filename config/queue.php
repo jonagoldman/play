@@ -27,7 +27,7 @@ return [
     | each backend supported by Laravel. You're also free to add more.
     |
     | Drivers: "sync", "database", "beanstalkd", "sqs", "redis",
-    |          "deferred", "failover", "null"
+    |          "deferred", "background", "failover", "null"
     |
     */
 
@@ -77,6 +77,10 @@ return [
 
         'deferred' => [
             'driver' => 'deferred',
+        ],
+
+        'background' => [
+            'driver' => 'background',
         ],
 
         'failover' => [
