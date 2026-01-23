@@ -11,7 +11,7 @@ return [
     'unguard_model' => false,
     'strict_model' => true,
     'automatic_eager_load_relationships' => true,
-    'require_morph_map' => true,
+    'require_morph_map' => false,
     'prohibit_destructive_commands' => true,
     'set_default_passwords' => true,
     'default_string_length' => 255,
