@@ -6,7 +6,6 @@ namespace Database\Factories;
 
 use App\Enums\TokenType;
 use App\Models\Token;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Date;
 
@@ -18,9 +17,8 @@ final class TokenFactory extends Factory
     public function definition(): array
     {
         return [
-            // 'user_id' => User::factory(),
             'type' => TokenType::BEARER,
-            'token' => TokenType::BEARER->random(),
+            'token' => TokenType::BEARER->generate(),
             'expires_at' => Date::now()->addYear(),
         ];
     }

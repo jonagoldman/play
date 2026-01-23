@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 
 enum TokenType: string
@@ -10,10 +11,10 @@ enum TokenType: string
     case BEARER = 'bearer';
     case REMEMBER = 'remember';
 
-    public function random(): string
+    public function generate(): string
     {
         return match ($this) {
-            self::BEARER => sprintf('%s%s%s', Config::string('auth.guards.dynamic.token_prefix', ''), $secret = Str::random(40), hash('crc32b', $secret)),
+            self::BEARER => sprintf('%s%s', $secret = Str::random(40), hash('crc32b', $secret)),
             self::REMEMBER => Str::random(60),
         };
     }

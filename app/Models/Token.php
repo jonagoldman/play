@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\TokenType;
-use Database\Factories\TokenFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,8 +15,6 @@ use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 final class Token extends Model
 {
     use HasExpiration;
-
-    /** @use HasFactory<TokenFactory> */
     use HasFactory;
     use HasUlids;
 
@@ -31,6 +28,10 @@ final class Token extends Model
 
     protected $hidden = [
         'token',
+    ];
+
+    protected $appends = [
+        'expired',
     ];
 
     public function user(): BelongsTo
