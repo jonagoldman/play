@@ -1,0 +1,45 @@
+{
+    "$schema": "https://getcomposer.org/schema.json",
+    "name": "jonagoldman/laravel-auth",
+    "type": "library",
+    "description": "Opinionated auth for Laravel projects.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jona Goldman",
+            "email": "jonagoldman@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "laravel/framework": "dev-12-opinionated as 12.43.1"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/jonagoldman/laravel-framework"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "JonaGoldman\\Auth\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JonaGoldman\\Auth\\AuthServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
