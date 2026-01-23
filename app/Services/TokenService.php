@@ -15,7 +15,7 @@ final class TokenService
     {
         return $user->tokens()->create([
             'type' => TokenType::BEARER,
-            'token' => TokenType::BEARER->random(),
+            'token' => TokenType::BEARER->generate(),
             'expires_at' => $expiresAt,
         ]);
     }
@@ -24,7 +24,7 @@ final class TokenService
     {
         $query = Token::query();
 
-        if (mb_strpos($token, '|') === false) {
+        if (! str_contains($token, '|')) {
             return $query->where('token', hash('sha256', $token))->first();
         }
 
