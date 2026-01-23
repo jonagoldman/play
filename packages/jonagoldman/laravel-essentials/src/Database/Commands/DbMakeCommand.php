@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace JonaGoldman\Essentials\Database\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Console\ConfirmableTrait;
+use Illuminate\Console\ConfirmableTrait as Confirmable;
 use Illuminate\Console\Prohibitable;
 use Illuminate\Contracts\Console\Isolatable;
 use JonaGoldman\Essentials\Database\Actions\CreateDatabase;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 )]
 final class DbMakeCommand extends Command implements Isolatable
 {
-    use ConfirmableTrait;
+    use Confirmable;
     use Prohibitable;
 
     protected $signature = 'db:make {name : The database name}
