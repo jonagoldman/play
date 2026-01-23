@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_hsQo9ccbkq
 createdAt: 2025-10-20T18:41:47.877274351
-updatedAt: 2025-10-21T14:14:02.732227419
+updatedAt: 2025-10-22T15:52:51.666215384
 workspaceId: wk_Ajxvw3KJyc
 folderId: fl_eZUadkUR3T
 authentication: {}
@@ -13,6 +13,6 @@ description: ''
 headers: []
 method: GET
 name: /users
-sortPriority: 0.0
+sortPriority: 333.3333333333333
 url: ${[ url ]}/users
 urlParameters: []

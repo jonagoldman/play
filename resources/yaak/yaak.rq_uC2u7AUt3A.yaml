@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_uC2u7AUt3A
 createdAt: 2025-10-21T14:17:58.591367074
-updatedAt: 2025-10-21T14:25:24.987599138
+updatedAt: 2025-10-23T14:24:03.859189897
 workspaceId: wk_Ajxvw3KJyc
 folderId: fl_MDVe7F32fi
 authentication: {}
@@ -13,7 +13,7 @@ description: ''
 headers: []
 method: DELETE
 name: /users/:id/tokens
-sortPriority: 2000.001
+sortPriority: 3000.0
 url: ${[ url ]}/users/:id/tokens/:token_id
 urlParameters:
 - enabled: true
