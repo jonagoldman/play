@@ -14,3 +14,6 @@ parameters:
         - routes
 
     reportUnmatchedIgnoredErrors: true
+
+    universalObjectCratesClasses:
+        - Illuminate\Http\Resources\Json\JsonResource
