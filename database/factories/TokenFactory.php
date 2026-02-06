@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\TokenType;
 use App\Models\Token;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Date;
+use JonaGoldman\Auth\Enums\TokenType;
 
 /**
  * @extends Factory<Token>

@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Illuminate\Support\ServiceProvider;
+use JonaGoldman\Auth\AuthService;
 use Override;
 
 final class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,8 @@ final class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         JsonApiResource::configure(version: '2.0.0');
+
+        AuthService::useTokenModel(Token::class);
     }
 
     public function boot(): void

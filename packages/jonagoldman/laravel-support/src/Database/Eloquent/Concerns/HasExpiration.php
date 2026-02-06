@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Support\Database\Eloquent\Concerns;
 
-use App\Models\Token;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -13,42 +12,42 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
  */
 trait HasExpiration
 {
-    public function expires(DateTimeInterface $expiresAt): Token
+    public function expires(DateTimeInterface $expiresAt): static
     {
         $this->expires_at = $expiresAt;
 
         return $this;
     }
 
-    public function addMonths(int $months): Token
+    public function addMonths(int $months): static
     {
         $expires = $this->expires_at ?: now();
 
         return $this->expires($expires->addMonths($months));
     }
 
-    public function addWeeks(int $weeks): Token
+    public function addWeeks(int $weeks): static
     {
         $expires = $this->expires_at ?: now();
 
         return $this->expires($expires->addWeeks($weeks));
     }
 
-    public function addDays(int $days): Token
+    public function addDays(int $days): static
     {
         $expires = $this->expires_at ?: now();
 
         return $this->expires($expires->addDays($days));
     }
 
-    public function addHours(int $hours): Token
+    public function addHours(int $hours): static
     {
         $expires = $this->expires_at ?: now();
 
         return $this->expires($expires->addHours($hours));
     }
 
-    public function addMinutes(int $minutes): Token
+    public function addMinutes(int $minutes): static
     {
         $expires = $this->expires_at ?: now();
 
