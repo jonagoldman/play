@@ -19,7 +19,7 @@ final readonly class UserController
     public function index(): ResourceCollection
     {
         return User::query()
-            ->with(['tokens'])
+            ->with(['tokens']) // remove if using JsonApiResource
             ->get()
             ->toResourceCollection();
     }

@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ApiController::class, 'index']);
 
-Route::apiResource('users', UserController::class);
-
-Route::apiResource('users.tokens', UserTokenController::class)
-    ->except(['update'])
-    ->scoped();
+Route::group(['middleware' => 'auth:dynamic'], function () {
+    Route::apiResource('users', UserController::class);
+    Route::apiResource('users.tokens', UserTokenController::class)
+        ->except(['update'])
+        ->scoped();
+})->scopeBindings();

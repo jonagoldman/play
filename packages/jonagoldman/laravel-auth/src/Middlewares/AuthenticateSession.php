@@ -83,6 +83,7 @@ final class AuthenticateSession
      */
     private function storePasswordHashInSession(Request $request, string $guard): void
     {
+        /** @var SessionGuard|\Illuminate\Contracts\Auth\Guard */
         $guardInstance = $this->auth->guard($guard);
 
         $request->session()->put([
@@ -105,6 +106,6 @@ final class AuthenticateSession
         }
 
         // Fall back to raw password hash format for backward compatibility...
-        return hash_equals($passwordHash, $storedValue);
+        return hash_equals($passwordHash ?? '', $storedValue);
     }
 }

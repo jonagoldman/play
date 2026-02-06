@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Concerns\HasTokens;
+use App\Resources\UserResource;
 use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Attributes\UseResource;
+use Illuminate\Database\Eloquent\Casts\AsBinary;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +24,7 @@ use Illuminate\Notifications\Notifiable;
  * @property-read CarbonInterface $created_at
  * @property-read CarbonInterface $updated_at
  */
+#[UseResource(UserResource::class)]
 final class User extends Authenticatable
 {
     use HasFactory;
@@ -48,6 +52,7 @@ final class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            // 'id' => AsBinary::ulid(),
             $this->getAuthPasswordName() => 'hashed',
             $this->getVerifiedAtName() => 'datetime',
         ];
