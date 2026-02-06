@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth\Models;
 
-use App\Enums\TokenType;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use JonaGoldman\Auth\Contracts\Token as TokenContract;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use JonaGoldman\Auth\Enums\TokenType;
 use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 
-final class Token extends Model implements TokenContract
+final class Token extends Model
 {
     use HasExpiration;
     use HasFactory;
@@ -33,6 +33,11 @@ final class Token extends Model implements TokenContract
     protected $appends = [
         'expired',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(config('auth.providers.users.model'));
+    }
 
     protected static function booted(): void
     {

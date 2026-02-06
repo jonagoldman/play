@@ -26,6 +26,7 @@ final class AuthServiceProvider extends ServiceProvider
             'auth.guards.dynamic' => array_merge([
                 'driver' => 'dynamic',
                 'provider' => 'users',
+                'guards' => ['session'],
             ], config('auth.guards.dynamic', [])),
         ]);
     }

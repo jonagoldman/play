@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\TokenType;
 use App\Models\Token;
 use App\Models\User;
 use DateTimeInterface;
+use JonaGoldman\Auth\Enums\TokenType;
 
 final class TokenService
 {
