@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth\Guards;
 
-use App\Auth\Actions\AuthenticateToken;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
+use JonaGoldman\Auth\Actions\AuthenticateToken;
 
 final class DynamicGuard
 {

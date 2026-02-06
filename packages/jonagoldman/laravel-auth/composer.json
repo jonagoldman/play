@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^8.4",
-        "laravel/framework": "dev-12.x-opinionated as 12.49.0"
+        "laravel/framework": "dev-12.x-opinionated as 12.50.0"
     },
     "repositories": [
         {
