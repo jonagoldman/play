@@ -1,0 +1,15 @@
+#ddev-generated
+
+# Claude Code version: stable, latest, or specific version (e.g., 1.0.58)
+ARG CLAUDE_VERSION=latest
+
+# Install Claude Code natively (no npm dependency)
+# Note: Binary stored in /opt/claude/bin, symlinked to ~/.local/bin in post-start
+# This avoids /usr/local/bin which Claude detects as leftover npm installation
+RUN curl -fsSL https://claude.ai/install.sh | bash -s ${CLAUDE_VERSION} \
+    && mkdir -p /opt/claude/bin \
+    && cp -L /root/.local/bin/claude /opt/claude/bin/claude \
+    && chmod +x /opt/claude/bin/claude
+
+# Install GitLab CLI
+RUN curl -sSL "https://raw.githubusercontent.com/upciti/wakemeops/main/assets/install_repository" | bash && apt install -y glab

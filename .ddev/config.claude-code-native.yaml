@@ -1,0 +1,20 @@
+#ddev-generated
+hooks:
+  post-start:
+    # Setup Claude Code binary in ~/.local/bin (where native installs are expected)
+    - exec: |
+        mkdir -p ~/.local/bin
+        ln -sf /opt/claude/bin/claude ~/.local/bin/claude
+    # Add ~/.local/bin to PATH
+    - exec: |
+        if ! grep -q '.local/bin' ~/.bashrc 2>/dev/null; then
+          echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+        fi
+    # Create symlinks for config persistence (use -sf to force if exists)
+    - exec: "touch /var/www/html/.ddev/claude-code/.claude.json && ln -sf /var/www/html/.ddev/claude-code/.claude.json ~/.claude.json"
+    - exec: "mkdir -p /var/www/html/.ddev/claude-code/.claude && ln -sfn /var/www/html/.ddev/claude-code/.claude ~/.claude"
+    # Set install method to native to avoid config mismatch warning
+    - exec: "~/.local/bin/claude config set --global installMethod native 2>/dev/null || true"
+
+web_environment:
+  - GLAB_CONFIG_DIR=/var/www/html/.ddev/.glab-cli/
