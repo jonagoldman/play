@@ -19,25 +19,4 @@ final class TokenService
             'expires_at' => $expiresAt,
         ]);
     }
-
-    public function findToken(string $token): ?Token
-    {
-        $query = Token::query();
-
-        if (! str_contains($token, '|')) {
-            return $query->where('token', hash('sha256', $token))->first();
-        }
-
-        [$id, $token] = explode('|', $token, 2);
-
-        /**
-         * Comparing using `hash_equals` ensures the comparison always takes exactly the same amount of time
-         * regardless of the inputted string, preventing an attacker from figuring out the secret key.
-         */
-        if (($instance = $query->find($id)) && hash_equals($instance->token, hash('sha256', $token))) {
-            return $instance;
-        }
-
-        return null;
-    }
 }

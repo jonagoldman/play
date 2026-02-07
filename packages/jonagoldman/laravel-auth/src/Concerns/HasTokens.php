@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Models\Concerns;
+namespace JonaGoldman\Auth\Concerns;
 
-use App\Models\Token;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use JonaGoldman\Auth\AuthService;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
@@ -20,6 +20,6 @@ trait HasTokens
 
     public function tokens(): HasMany
     {
-        return $this->hasMany(Token::class);
+        return $this->hasMany(AuthService::tokenModel());
     }
 }

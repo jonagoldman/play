@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use JonaGoldman\Auth\AuthService;
 use JonaGoldman\Auth\Enums\TokenType;
 use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 
-final class Token extends Model
+class Token extends Model
 {
     use HasExpiration;
     use HasFactory;
@@ -36,12 +37,12 @@ final class Token extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(config('auth.providers.users.model'));
+        return $this->belongsTo(AuthService::userModel());
     }
 
     protected static function booted(): void
     {
-        self::created(function (Token $token) {
+        static::created(function (self $token) {
             $token->append('plain');
         });
     }

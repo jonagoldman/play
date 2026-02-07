@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Models\Concerns\HasTokens;
 use App\Resources\UserResource;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
@@ -13,6 +12,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use JonaGoldman\Auth\Concerns\HasTokens;
 
 /**
  * @property-read string $id
