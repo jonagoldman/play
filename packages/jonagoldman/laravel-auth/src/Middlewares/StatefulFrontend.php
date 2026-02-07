@@ -93,6 +93,7 @@ final class StatefulFrontend
         config([
             'session.http_only' => true,
             'session.same_site' => 'lax',
+            'session.secure' => app()->isProduction(),
         ]);
     }
 

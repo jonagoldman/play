@@ -45,7 +45,7 @@ final class AppServiceProvider extends ServiceProvider
         $config = $this->app->make('config');
 
         $router->prefix('api')
-            ->middleware(['api']) // 'throttle:api'
+            ->middleware(['api', 'throttle:api'])
             ->group(function ($router): void {
                 /** @var \Illuminate\Routing\Router $router */
                 $router
