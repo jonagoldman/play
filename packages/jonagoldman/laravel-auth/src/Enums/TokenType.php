@@ -14,7 +14,7 @@ enum TokenType: string
     public function generate(): string
     {
         return match ($this) {
-            self::BEARER => sprintf('%s%s', $secret = Str::random(40), hash('crc32b', $secret)),
+            self::BEARER => Str::random(48),
             self::REMEMBER => Str::random(60),
         };
     }
