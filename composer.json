@@ -12,9 +12,10 @@
     ],
     "require": {
         "php": "^8.4",
+        "jonagoldman/laravel-auth": "dev-master",
         "jonagoldman/laravel-essentials": "dev-master",
         "jonagoldman/laravel-support": "dev-master",
-        "laravel/framework": "dev-12.x-opinionated as 12.49.0",
+        "laravel/framework": "dev-12.x-opinionated as 12.50.0",
         "laravel/tinker": "^2.11.0",
         "symfony/filesystem": "^8.0.1"
     },
