@@ -26,6 +26,7 @@ final class AppServiceProvider extends ServiceProvider
         JsonApiResource::configure(version: '2.0.0');
 
         AuthService::useTokenModel(Token::class);
+        AuthService::useUserModel(User::class);
     }
 
     public function boot(): void
