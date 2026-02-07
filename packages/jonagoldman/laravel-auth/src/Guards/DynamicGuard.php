@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
+use JonaGoldman\Auth\AuthConfig;
 
 final class DynamicGuard
 {
@@ -16,6 +17,7 @@ final class DynamicGuard
      */
     public function __construct(
         private Auth $auth,
+        private AuthConfig $config,
     ) {}
 
     /**
@@ -23,12 +25,14 @@ final class DynamicGuard
      */
     public function user(Request $request): ?User
     {
-        if ($user = $this->auth->guard('session')->user()) {
-            return $user;
+        foreach ($this->config->guards as $guard) {
+            if ($user = $this->auth->guard($guard)->user()) {
+                return $user;
+            }
         }
 
         if ($token = $request->bearerToken()) {
-            return AuthenticateToken::run($token);
+            return app(AuthenticateToken::class)($token);
         }
 
         return null;
