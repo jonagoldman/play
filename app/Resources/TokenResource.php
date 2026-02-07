@@ -24,6 +24,7 @@ final class TokenResource extends JsonResource
             ]),
             'expired' => $this->expired,
             'expires_at' => $this->expires_at?->toIso8601ZuluString(),
+            'last_used_at' => $this->last_used_at?->toIso8601ZuluString(),
             'created_at' => $this->created_at?->toIso8601ZuluString(),
             'updated_at' => $this->updated_at?->toIso8601ZuluString(),
         ];

@@ -9,19 +9,18 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use JonaGoldman\Auth\AuthConfig;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthenticateSession
 {
     /**
-     * Create a new middleware instance.
-     *
      * @param  \Illuminate\Auth\AuthManager  $auth
      */
     public function __construct(
-        private AuthFactory $auth
+        private AuthFactory $auth,
+        private AuthConfig $config,
     ) {}
 
     /**
@@ -37,7 +36,7 @@ final class AuthenticateSession
             return $next($request);
         }
 
-        $guards = Collection::make(Arr::wrap(config('auth.guards.dynamic.guards')))
+        $guards = Collection::make($this->config->guards)
             ->mapWithKeys(fn ($guard) => [$guard => $this->auth->guard($guard)])
             ->filter(fn ($guard) => $guard instanceof SessionGuard);
 

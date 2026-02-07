@@ -19,31 +19,73 @@ final class AuthServiceProvider extends ServiceProvider
      */
     protected $app;
 
+    /** @var array<string, mixed> */
+    private static array $pendingConfig = [];
+
+    /**
+     * Configure the auth package before registration.
+     *
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $tokenModel
+     * @param  class-string<\Illuminate\Contracts\Auth\Authenticatable>  $userModel
+     * @param  list<string>  $guards
+     * @param  list<string>  $statefulDomains
+     */
+    public static function configure(
+        string $tokenModel,
+        string $userModel,
+        array $guards = ['session'],
+        array $statefulDomains = [],
+        bool $secureCookies = true,
+        int $pruneDays = 30,
+        int $lastUsedAtDebounce = 300,
+    ): void {
+        self::$pendingConfig = [
+            'tokenModel' => $tokenModel,
+            'userModel' => $userModel,
+            'guards' => $guards,
+            'statefulDomains' => $statefulDomains,
+            'secureCookies' => $secureCookies,
+            'pruneDays' => $pruneDays,
+            'lastUsedAtDebounce' => $lastUsedAtDebounce,
+        ];
+    }
+
     #[Override]
     public function register(): void
     {
+        $this->app->singleton(AuthConfig::class, function (): AuthConfig {
+            return new AuthConfig(...self::$pendingConfig);
+        });
+
         config([
-            'auth.guards.dynamic' => array_merge([
+            'auth.guards.dynamic' => [
                 'driver' => 'dynamic',
                 'provider' => 'users',
-                'guards' => ['session'],
-            ], config('auth.guards.dynamic', [])),
+            ],
         ]);
     }
 
     /**
-     * Bootstrap any application services.
-     *
      * @param  Kernel|\Illuminate\Foundation\Http\Kernel  $kernel
      * @param  Auth|\Illuminate\Auth\AuthManager  $auth
      */
     public function boot(Kernel $kernel, Auth $auth): void
     {
-        // Register a new callback based request guard
         $auth->viaRequest('dynamic', function (Request $request) {
             return app(DynamicGuard::class)->user($request);
         });
 
         $kernel->prependToMiddlewarePriority(StatefulFrontend::class);
+
+        /** @var AuthConfig $config */
+        $config = $this->app->make(AuthConfig::class);
+
+        if ($config->secureCookies) {
+            config([
+                'session.http_only' => true,
+                'session.same_site' => 'lax',
+                'session.secure' => $this->app->isProduction(),
+            ]);
+        }
     }
 }

@@ -6,7 +6,13 @@ namespace App\Models;
 
 use App\Resources\TokenResource;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
-use JonaGoldman\Auth\Models\Token as BaseToken;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use JonaGoldman\Auth\Concerns\IsAuthToken;
 
 #[UseResource(TokenResource::class)]
-final class Token extends BaseToken {}
+final class Token extends Model
+{
+    use HasFactory;
+    use IsAuthToken;
+}

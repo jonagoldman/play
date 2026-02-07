@@ -10,7 +10,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Auth\AuthService;
+use JonaGoldman\Auth\AuthServiceProvider;
 use Override;
 
 final class AppServiceProvider extends ServiceProvider
@@ -25,8 +25,12 @@ final class AppServiceProvider extends ServiceProvider
     {
         JsonApiResource::configure(version: '2.0.0');
 
-        AuthService::useTokenModel(Token::class);
-        AuthService::useUserModel(User::class);
+        AuthServiceProvider::configure(
+            tokenModel: Token::class,
+            userModel: User::class,
+            guards: ['session'],
+            statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
+        );
     }
 
     public function boot(): void
