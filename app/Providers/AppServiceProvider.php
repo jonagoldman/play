@@ -7,8 +7,11 @@ namespace App\Providers;
 use App\ApiRouteRegistrar;
 use App\Models\Token;
 use App\Models\User;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use JonaGoldman\Auth\AuthServiceProvider;
 use Override;
@@ -35,6 +38,10 @@ final class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        RateLimiter::for('api', function (Request $request): Limit {
+            return Limit::perMinute(120)->by($request->user()?->id ?: $request->ip());
+        });
+
         $this->registerRoutes();
         $this->registerMorphMap();
         $this->registerEventsListeners();
