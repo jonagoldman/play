@@ -16,7 +16,7 @@ final readonly class UserController
         private UserService $userService
     ) {}
 
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
         return User::query()
             ->withIncluded(
@@ -34,7 +34,7 @@ final readonly class UserController
             ->toResource();
     }
 
-    public function show(User $user): JsonResource
+    public function show(Request $request, User $user): JsonResource
     {
         return $user
             ->loadIncluded(
