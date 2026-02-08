@@ -24,6 +24,7 @@ final class UserResource extends JsonResource
             'updated_at' => $this->updated_at->toIso8601ZuluString(),
 
             'tokens' => TokenResource::collection($this->whenLoaded('tokens')),
+            'tokens_count' => $this->whenCounted('tokens'),
         ];
     }
 

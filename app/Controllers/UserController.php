@@ -19,7 +19,10 @@ final readonly class UserController
     public function index(): ResourceCollection
     {
         return User::query()
-            ->with(['tokens']) // remove if using JsonApiResource
+            ->withIncluded(
+                allowed: ['tokens'],
+                allowedCounts: ['tokens'],
+            )
             ->get()
             ->toResourceCollection();
     }
@@ -33,7 +36,12 @@ final readonly class UserController
 
     public function show(User $user): JsonResource
     {
-        return $user->toResource();
+        return $user
+            ->loadIncluded(
+                allowed: ['tokens'],
+                allowedCounts: ['tokens'],
+            )
+            ->toResource();
     }
 
     public function update(Request $request, User $user): JsonResource

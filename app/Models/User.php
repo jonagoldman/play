@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JonaGoldman\Auth\Concerns\HasTokens;
+use JonaGoldman\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
 
 /**
  * @property-read string $id
@@ -27,6 +28,7 @@ use JonaGoldman\Auth\Concerns\HasTokens;
 #[UseResource(UserResource::class)]
 final class User extends Authenticatable
 {
+    use CanIncludeRelationships;
     use HasFactory;
     use HasTokens;
     use HasUlids;
