@@ -31,14 +31,14 @@ test('index with include=tokens includes tokens', function (): void {
         ]);
 });
 
-test('index with non-whitelisted include is silently ignored', function (): void {
+test('index with non-whitelisted include silently ignores it', function (): void {
     $response = $this->getJson('/api/users?include=nonexistent');
 
     $response->assertSuccessful();
     $response->assertJsonMissing(['nonexistent']);
 });
 
-test('index with mixed valid and invalid includes loads only valid ones', function (): void {
+test('index with mixed valid and invalid includes only loads valid ones', function (): void {
     $response = $this->getJson('/api/users?include=tokens,nonexistent');
 
     $response->assertSuccessful()
@@ -84,7 +84,7 @@ test('show with with_count=tokens includes tokens count', function (): void {
         ->assertJsonPath('data.tokens_count', 1);
 });
 
-test('with_count with non-whitelisted value is silently ignored', function (): void {
+test('with_count with non-whitelisted value silently ignores it', function (): void {
     $response = $this->getJson('/api/users?with_count=nonexistent');
 
     $response->assertSuccessful();
