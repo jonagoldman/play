@@ -41,6 +41,10 @@ trait IsAuthToken
      */
     public static function findByToken(string $token): ?static
     {
+        if (empty($token)) {
+            return null;
+        }
+
         $query = static::query();
 
         if (mb_strpos($token, '|') === false) {
@@ -49,6 +53,10 @@ trait IsAuthToken
         }
 
         [$id, $secret] = explode('|', $token, 2);
+
+        if (empty($id) || empty($secret)) {
+            return null;
+        }
 
         /** @var static|null $instance */
         $instance = $query->find($id);
@@ -62,19 +70,19 @@ trait IsAuthToken
 
     public function initializeIsAuthToken(): void
     {
-        $this->fillable = [
+        $this->fillable = array_merge($this->fillable, [
             'type',
             'token',
             'expires_at',
-        ];
+        ]);
 
-        $this->hidden = [
+        $this->hidden = array_merge($this->hidden, [
             'token',
-        ];
+        ]);
 
-        $this->appends = [
+        $this->appends = array_merge($this->appends, [
             'expired',
-        ];
+        ]);
     }
 
     public function user(): BelongsTo
@@ -93,7 +101,16 @@ trait IsAuthToken
             return;
         }
 
-        $this->forceFill(['last_used_at' => now()])->saveQuietly();
+        $connection = $this->getConnection();
+
+        if (method_exists($connection, 'hasModifiedRecords') &&
+            method_exists($connection, 'setRecordModificationState')) {
+            $hasModifiedRecords = $connection->hasModifiedRecords();
+            $this->forceFill(['last_used_at' => now()])->saveQuietly();
+            $connection->setRecordModificationState($hasModifiedRecords);
+        } else {
+            $this->forceFill(['last_used_at' => now()])->saveQuietly();
+        }
     }
 
     /**
