@@ -1,7 +1,7 @@
 name: claude-code-native
 repository: Gonzalo2683/ddev-claudecode-native
 version: v1.0.6
-install_date: "2026-02-07T17:06:47-03:00"
+install_date: "2026-02-07T23:23:28-03:00"
 project_files:
     - web-build/Dockerfile.claude-code-native
     - web-build/claude-code-native.gitignore
