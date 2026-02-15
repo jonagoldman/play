@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth;
 
+use Illuminate\Auth\RequestGuard;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use JonaGoldman\Auth\Guards\DynamicGuard;
 use JonaGoldman\Auth\Middlewares\StatefulFrontend;
@@ -58,10 +58,10 @@ final class AuthServiceProvider extends ServiceProvider
         });
 
         config([
-            'auth.guards.dynamic' => [
+            'auth.guards.dynamic' => array_merge([
                 'driver' => 'dynamic',
                 'provider' => 'users',
-            ],
+            ], config('auth.guards.dynamic', [])),
         ]);
     }
 
@@ -71,9 +71,14 @@ final class AuthServiceProvider extends ServiceProvider
      */
     public function boot(Kernel $kernel, Auth $auth): void
     {
-        $auth->viaRequest('dynamic', function (Request $request) {
-            return app(DynamicGuard::class)->user($request);
-        });
+        $auth->extend('dynamic', fn ($app, $name, array $config) => tap(
+            new RequestGuard(
+                new DynamicGuard($auth, $app->make(AuthConfig::class)),
+                $app['request'],
+                $auth->createUserProvider($config['provider'] ?? null),
+            ),
+            fn (RequestGuard $guard) => $this->app->refresh('request', $guard, 'setRequest'),
+        ));
 
         $kernel->prependToMiddlewarePriority(StatefulFrontend::class);
 

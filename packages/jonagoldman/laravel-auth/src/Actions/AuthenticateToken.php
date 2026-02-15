@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth\Actions;
 
-use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Events\TokenAuthenticated;
 
 final class AuthenticateToken
 {
@@ -39,7 +39,7 @@ final class AuthenticateToken
 
             $user->setRelation('token', $accessToken->withoutRelations());
 
-            $this->dispatcher->dispatch(new Authenticated('dynamic', $user));
+            $this->dispatcher->dispatch(new TokenAuthenticated($accessToken));
         }
 
         return $user;

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Http\Request;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\TransientToken;
 
 final class DynamicGuard
 {
@@ -23,10 +24,13 @@ final class DynamicGuard
     /**
      * Get the authenticated user for the given request.
      */
-    public function user(Request $request): ?User
+    public function __invoke(Request $request): ?User
     {
         foreach ($this->config->guards as $guard) {
             if ($user = $this->auth->guard($guard)->user()) {
+                /** @var \Illuminate\Database\Eloquent\Model&User $user */
+                $user->setRelation('token', new TransientToken);
+
                 return $user;
             }
         }
