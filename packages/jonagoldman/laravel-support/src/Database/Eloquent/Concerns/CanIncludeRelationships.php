@@ -22,8 +22,8 @@ trait CanIncludeRelationships
     #[Scope]
     public function withIncluded(Builder $query, array $allowed = [], array $allowedCounts = []): void
     {
-        $query->with(array_intersect(explode(',', Request::query('include', '')), $allowed));
-        $query->withCount(array_intersect(explode(',', Request::query('with_count', '')), $allowedCounts));
+        $query->with($this->parseIncluded('include', $allowed));
+        $query->withCount($this->parseIncluded('with_count', $allowedCounts));
     }
 
     /**
@@ -34,9 +34,29 @@ trait CanIncludeRelationships
      */
     public function loadIncluded(array $allowed = [], array $allowedCounts = []): static
     {
-        $this->loadMissing(array_intersect(explode(',', Request::query('include', '')), $allowed));
-        $this->loadCount(array_intersect(explode(',', Request::query('with_count', '')), $allowedCounts));
+        $this->loadMissing($this->parseIncluded('include', $allowed));
+        $this->loadCount($this->parseIncluded('with_count', $allowedCounts));
 
         return $this;
+    }
+
+    /**
+     * Parse a comma-separated query parameter and filter it against an allowlist.
+     *
+     * @param  list<string>  $allowed
+     * @return list<string>
+     */
+    private function parseIncluded(string $param, array $allowed): array
+    {
+        $value = Request::query($param);
+
+        if (! is_string($value) || $value === '') {
+            return [];
+        }
+
+        return array_values(array_intersect(
+            array_map(mb_trim(...), explode(',', $value)),
+            $allowed,
+        ));
     }
 }
