@@ -27,11 +27,15 @@ test('register creates a user and returns a token', function (): void {
                 'id',
                 'name',
                 'email',
-                'tokens' => [['id', 'plain', 'token']],
+                'tokens' => [['id', 'name', 'plain', 'token']],
             ],
         ]);
 
     $this->assertDatabaseHas('users', ['email' => 'john@example.com']);
+
+    $token = Token::query()->first();
+    expect($token->expires_at)->not->toBeNull()
+        ->and($token->name)->toBe('auth');
 });
 
 test('register validates required fields', function (): void {
@@ -73,7 +77,7 @@ test('login authenticates and returns a token', function (): void {
                 'id',
                 'name',
                 'email',
-                'tokens' => [['id', 'plain', 'token']],
+                'tokens' => [['id', 'name', 'plain', 'token']],
             ],
         ]);
 });

@@ -8,14 +8,14 @@ use Illuminate\Support\Str;
 
 enum TokenType: string
 {
-    case BEARER = 'bearer';
-    case REMEMBER = 'remember';
+    case Bearer = 'bearer';
+    case Remember = 'remember';
 
     public function generate(): string
     {
         return match ($this) {
-            self::BEARER => Str::random(48),
-            self::REMEMBER => Str::random(60),
+            self::Bearer => Str::random(48),
+            self::Remember => Str::random(60),
         };
     }
 }

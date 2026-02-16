@@ -17,8 +17,8 @@ final class TokenFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => TokenType::BEARER,
-            'token' => TokenType::BEARER->generate(),
+            'type' => TokenType::Bearer,
+            'token' => TokenType::Bearer->generate(),
             'expires_at' => Date::now()->addYear(),
         ];
     }
