@@ -19,10 +19,7 @@ final class TokenResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'type' => $this->type,
-            $this->mergeWhen($this->plain, [
-                'plain' => $this->plain,
-                'token' => $this->getKey().'|'.$this->plain,
-            ]),
+            'token' => $this->when((bool) $this->plain, $this->plain),
             'expired' => $this->expired,
             'expires_at' => $this->expires_at?->toIso8601ZuluString(),
             'last_used_at' => $this->last_used_at?->toIso8601ZuluString(),

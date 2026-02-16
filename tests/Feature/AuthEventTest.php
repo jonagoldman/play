@@ -20,7 +20,7 @@ test('token authentication dispatches Attempting and TokenAuthenticated events',
     $user = User::factory()->create();
     $token = Token::factory()->for($user)->create();
 
-    $this->withToken($token->getKey().'|'.$token->plain, 'Bearer')
+    $this->withToken($token->plain, 'Bearer')
         ->getJson('/api/user')
         ->assertSuccessful();
 
@@ -48,7 +48,7 @@ test('expired token dispatches Failed event', function (): void {
         'expires_at' => Date::now()->subDay(),
     ]);
 
-    $this->withToken($token->getKey().'|'.$token->plain, 'Bearer')
+    $this->withToken($token->plain, 'Bearer')
         ->getJson('/api/user')
         ->assertUnauthorized();
 
@@ -61,7 +61,7 @@ test('token authentication dispatches Login event', function (): void {
     $user = User::factory()->create();
     $token = Token::factory()->for($user)->create();
 
-    $this->withToken($token->getKey().'|'.$token->plain, 'Bearer')
+    $this->withToken($token->plain, 'Bearer')
         ->getJson('/api/user')
         ->assertSuccessful();
 
