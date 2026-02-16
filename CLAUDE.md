@@ -170,10 +170,6 @@ Invalid includes are silently ignored (filtered via `array_intersect`).
 - **Assertions:** `assertSuccessful()`, `assertUnprocessable()`, `assertJsonPath()`, `assertJsonStructure()`, `assertDatabaseHas()`, `assertJsonValidationErrors()`
 - **Organization:** `tests/Feature/` for HTTP/integration, `tests/Unit/` for architecture and isolated logic
 
-## Git Workflow
-
-This repo uses **GitButler** for branch management. Do not make git commits directly — GitButler manages commits and virtual branches itself.
-
 ## Code Conventions
 
 - **`declare(strict_types=1)`** on every PHP file
