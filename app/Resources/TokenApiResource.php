@@ -16,20 +16,14 @@ final class TokenApiResource extends JsonApiResource
     #[Override]
     public function toAttributes(Request $request): array
     {
-        $attributes = [
+        return [
             'user_id' => $this->user_id,
             'type' => $this->type,
+            'token' => $this->when((bool) $this->plain, $this->plain),
             'expired' => $this->expired,
             'expires_at' => $this->expires_at?->toIso8601ZuluString(),
             'created_at' => $this->created_at?->toIso8601ZuluString(),
             'updated_at' => $this->updated_at?->toIso8601ZuluString(),
         ];
-
-        if ($this->plain) {
-            $attributes['plain'] = $this->plain;
-            $attributes['token'] = $this->getKey().'|'.$this->plain;
-        }
-
-        return $attributes;
     }
 }

@@ -27,7 +27,7 @@ test('register creates a user and returns a token', function (): void {
                 'id',
                 'name',
                 'email',
-                'tokens' => [['id', 'name', 'plain', 'token']],
+                'tokens' => [['id', 'name', 'token']],
             ],
         ]);
 
@@ -77,7 +77,7 @@ test('login authenticates and returns a token', function (): void {
                 'id',
                 'name',
                 'email',
-                'tokens' => [['id', 'name', 'plain', 'token']],
+                'tokens' => [['id', 'name', 'token']],
             ],
         ]);
 });
@@ -111,7 +111,7 @@ test('logout revokes the bearer token', function (): void {
     $user = User::factory()->create();
     $token = Token::factory()->for($user)->create();
 
-    $response = $this->withToken($token->getKey().'|'.$token->plain, 'Bearer')
+    $response = $this->withToken($token->plain, 'Bearer')
         ->postJson('/api/logout');
 
     $response->assertNoContent();
@@ -128,7 +128,7 @@ test('user returns the authenticated user', function (): void {
     $user = User::factory()->create();
     $token = Token::factory()->for($user)->create();
 
-    $response = $this->withToken($token->getKey().'|'.$token->plain, 'Bearer')
+    $response = $this->withToken($token->plain, 'Bearer')
         ->getJson('/api/user');
 
     $response->assertSuccessful()

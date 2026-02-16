@@ -81,7 +81,7 @@ AuthServiceProvider::configure(
 );
 ```
 
-**DynamicGuard flow:** Tries each configured guard (session) first. If none authenticate, falls back to bearer token via `AuthenticateToken`. Token format: `{ulid}|{plain}` (e.g., `01J2K3M4N5|abc123...`). Plain text is 48 chars (bearer) or 60 chars (remember). Stored as SHA256 hash. Checks `expires_at`, updates `last_used_at` with debounce, dispatches `TokenAuthenticated` event.
+**DynamicGuard flow:** Tries each configured guard (session) first. If none authenticate, falls back to bearer token via `AuthenticateToken`. Tokens are plain random strings (48 chars for bearer, 60 chars for remember). Stored as SHA256 hash, looked up via `WHERE token = hash(secret)`. Checks `expires_at`, updates `last_used_at` with debounce, dispatches `TokenAuthenticated` event.
 
 ### Middleware Pipeline
 
@@ -165,10 +165,14 @@ Invalid includes are silently ignored (filtered via `array_intersect`).
 - **Framework:** Pest 4 with `pest()->extend(TestCase::class)->in('Feature')`
 - **Database:** Each feature test file declares `uses(RefreshDatabase::class)` at the top
 - **Setup:** `beforeEach()` for shared state, `actingAs($user, 'dynamic')` for session auth
-- **Token auth:** `$this->withToken($token->getKey().'|'.$token->plain, 'Bearer')`
+- **Token auth:** `$this->withToken($token->plain, 'Bearer')`
 - **Factories:** `User::factory()->create()`, `Token::factory()->for($user)->create()`, states like `unverified()`
 - **Assertions:** `assertSuccessful()`, `assertUnprocessable()`, `assertJsonPath()`, `assertJsonStructure()`, `assertDatabaseHas()`, `assertJsonValidationErrors()`
 - **Organization:** `tests/Feature/` for HTTP/integration, `tests/Unit/` for architecture and isolated logic
+
+## Git
+
+- Do **not** add `Co-Authored-By` lines to commits
 
 ## Code Conventions
 

@@ -13,10 +13,7 @@ use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
 use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 
-use function explode;
 use function hash;
-use function hash_equals;
-use function mb_strpos;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
@@ -37,7 +34,7 @@ trait IsAuthToken
     }
 
     /**
-     * Find a token by its raw value (supports `id|secret` format).
+     * Find a token by its raw value.
      */
     public static function findByToken(string $token): ?static
     {
@@ -45,27 +42,8 @@ trait IsAuthToken
             return null;
         }
 
-        $query = static::query();
-
-        if (mb_strpos($token, '|') === false) {
-            /** @var static|null */
-            return $query->where('token', hash('sha256', $token))->first();
-        }
-
-        [$id, $secret] = explode('|', $token, 2);
-
-        if (empty($id) || empty($secret)) {
-            return null;
-        }
-
-        /** @var static|null $instance */
-        $instance = $query->find($id);
-
-        if ($instance && hash_equals($instance->token, hash('sha256', $secret))) {
-            return $instance;
-        }
-
-        return null;
+        /** @var static|null */
+        return static::query()->where('token', hash('sha256', $token))->first();
     }
 
     public function initializeIsAuthToken(): void
