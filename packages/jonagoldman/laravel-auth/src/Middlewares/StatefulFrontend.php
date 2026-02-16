@@ -71,12 +71,6 @@ final class StatefulFrontend
             'authenticate_session' => AuthenticateSession::class,
         ])));
 
-        array_unshift($middleware, function (Request $request, Closure $next) {
-            $request->attributes->set('dynamic', true);
-
-            return $next($request);
-        });
-
         return $middleware;
     }
 }

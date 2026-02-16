@@ -9,9 +9,9 @@ use App\Requests\LoginRequest;
 use App\Requests\RegisterRequest;
 use App\Services\TokenService;
 use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
@@ -26,7 +26,7 @@ final readonly class AuthController
     {
         $user = $this->userService->createUser($request->validated(), dispatch: true);
 
-        $token = $this->tokenService->createToken($user);
+        $token = $this->tokenService->createToken($user, name: 'auth');
 
         return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
     }
@@ -48,27 +48,24 @@ final readonly class AuthController
             ]);
         }
 
-        $token = $this->tokenService->createToken($user);
+        $token = $this->tokenService->createToken($user, name: 'auth');
 
         return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
     }
 
-    public function logout(Request $request): JsonResponse
+    public function logout(Request $request): Response
     {
         /** @var User $user */
         $user = $request->user();
 
-        /** @var \App\Models\Token|null $currentToken */
-        $currentToken = $user->relationLoaded('token') ? $user->getRelation('token') : null;
-
-        if ($request->bearerToken() && $currentToken) {
-            $currentToken->delete();
+        if ($request->bearerToken() && $user->relationLoaded('token')) {
+            $user->token?->delete();
         } else {
             $request->session()->invalidate();
             $request->session()->regenerateToken();
         }
 
-        return response()->json(status: 204);
+        return response()->noContent();
     }
 
     public function user(Request $request): JsonResource

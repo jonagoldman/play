@@ -71,6 +71,7 @@ trait IsAuthToken
     public function initializeIsAuthToken(): void
     {
         $this->fillable = array_merge($this->fillable, [
+            'name',
             'type',
             'token',
             'expires_at',
@@ -129,8 +130,8 @@ trait IsAuthToken
     {
         return [
             'type' => TokenType::class,
-            'expires_at' => 'datetime',
-            'last_used_at' => 'datetime',
+            'expires_at' => 'immutable_datetime',
+            'last_used_at' => 'immutable_datetime',
         ];
     }
 

@@ -17,6 +17,7 @@ final class TokenResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'name' => $this->name,
             'type' => $this->type,
             $this->mergeWhen($this->plain, [
                 'plain' => $this->plain,

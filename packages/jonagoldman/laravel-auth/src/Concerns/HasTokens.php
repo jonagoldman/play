@@ -13,7 +13,7 @@ use JonaGoldman\Auth\AuthConfig;
  */
 trait HasTokens
 {
-    public function token(): ?HasOne
+    public function token(): HasOne
     {
         return $this->tokens()->one()->latestOfMany();
     }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth\Guards;
 
+use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
@@ -19,6 +21,8 @@ final class DynamicGuard
     public function __construct(
         private Auth $auth,
         private AuthConfig $config,
+        private AuthenticateToken $authenticateToken,
+        private DispatcherContract $dispatcher,
     ) {}
 
     /**
@@ -31,12 +35,20 @@ final class DynamicGuard
                 /** @var \Illuminate\Database\Eloquent\Model&User $user */
                 $user->setRelation('token', new TransientToken);
 
+                $this->dispatcher->dispatch(new Login('dynamic', $user, false));
+
                 return $user;
             }
         }
 
         if ($token = $request->bearerToken()) {
-            return app(AuthenticateToken::class)($token);
+            $user = ($this->authenticateToken)($token);
+
+            if ($user) {
+                $this->dispatcher->dispatch(new Login('dynamic', $user, false));
+            }
+
+            return $user;
         }
 
         return null;
