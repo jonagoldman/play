@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Support\Database\Eloquent\Concerns;
 
+use Carbon\CarbonImmutable;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
@@ -21,46 +24,53 @@ trait HasExpiration
 
     public function addMonths(int $months): static
     {
-        $expires = $this->expires_at ?: now();
-
-        return $this->expires($expires->addMonths($months));
+        return $this->expires($this->fromExpiration()->addMonths($months));
     }
 
     public function addWeeks(int $weeks): static
     {
-        $expires = $this->expires_at ?: now();
-
-        return $this->expires($expires->addWeeks($weeks));
+        return $this->expires($this->fromExpiration()->addWeeks($weeks));
     }
 
     public function addDays(int $days): static
     {
-        $expires = $this->expires_at ?: now();
-
-        return $this->expires($expires->addDays($days));
+        return $this->expires($this->fromExpiration()->addDays($days));
     }
 
     public function addHours(int $hours): static
     {
-        $expires = $this->expires_at ?: now();
-
-        return $this->expires($expires->addHours($hours));
+        return $this->expires($this->fromExpiration()->addHours($hours));
     }
 
     public function addMinutes(int $minutes): static
     {
-        $expires = $this->expires_at ?: now();
+        return $this->expires($this->fromExpiration()->addMinutes($minutes));
+    }
 
-        return $this->expires($expires->addMinutes($minutes));
+    #[Scope]
+    public function whereExpired(Builder $query): void
+    {
+        $query->whereNotNull('expires_at')->where('expires_at', '<=', now());
+    }
+
+    #[Scope]
+    public function whereNotExpired(Builder $query): void
+    {
+        $query->where(fn (Builder $query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
     protected function expired(): Attribute
     {
         return Attribute::make(
-            get: fn (): bool => $this->expires_at && $this->expires_at->isPast(),
+            get: fn (): bool => $this->expires_at !== null && $this->expires_at->isPast(),
             set: fn (bool $expired): array => [
                 'expires_at' => $expired ? now()->toDateTimeString() : null,
             ],
         );
+    }
+
+    private function fromExpiration(): CarbonImmutable
+    {
+        return ($this->expires_at ?? now())->toImmutable();
     }
 }
