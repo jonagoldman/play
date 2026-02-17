@@ -7,8 +7,8 @@ namespace JonaGoldman\Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use InvalidArgumentException;
-use JonaGoldman\Auth\Concerns\HasTokens;
 use JonaGoldman\Auth\Concerns\IsAuthToken;
+use JonaGoldman\Auth\Contracts\HasTokens;
 
 final class AuthConfig
 {
@@ -43,8 +43,8 @@ final class AuthConfig
             throw new InvalidArgumentException("User model [{$userModel}] does not exist.");
         }
 
-        if (! in_array(HasTokens::class, class_uses_recursive($userModel), true)) {
-            throw new InvalidArgumentException("User model [{$userModel}] must use the HasTokens trait.");
+        if (! is_subclass_of($userModel, HasTokens::class)) {
+            throw new InvalidArgumentException("User model [{$userModel}] must implement the HasTokens contract.");
         }
     }
 }

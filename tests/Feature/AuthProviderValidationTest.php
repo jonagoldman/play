@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Models\Token;
+use App\Models\User;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use JonaGoldman\Auth\Actions\AuthenticateToken;
+use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Concerns\HasTokens;
+use JonaGoldman\Auth\Contracts\HasTokens as HasTokensContract;
+
+uses(RefreshDatabase::class);
+
+test('token authentication fails when user model does not match configured provider', function (): void {
+    Event::fake([Failed::class]);
+
+    $user = User::factory()->create();
+    $token = Token::factory()->for($user)->create();
+
+    $action = new AuthenticateToken(
+        config: new AuthConfig(
+            tokenModel: Token::class,
+            userModel: AlternateUser::class,
+        ),
+        dispatcher: Event::getFacadeRoot(),
+    );
+
+    $result = $action($token->plain);
+
+    expect($result)->toBeNull();
+
+    Event::assertDispatched(Failed::class, fn (Failed $e) => $e->guard === 'dynamic');
+});
+
+test('token authentication succeeds when user model matches configured provider', function (): void {
+    $user = User::factory()->create();
+    $token = Token::factory()->for($user)->create();
+
+    $action = new AuthenticateToken(
+        config: new AuthConfig(
+            tokenModel: Token::class,
+            userModel: User::class,
+        ),
+        dispatcher: Event::getFacadeRoot(),
+    );
+
+    $result = $action($token->plain);
+
+    expect($result)->not->toBeNull()
+        ->and($result->getKey())->toBe($user->getKey());
+});
+
+final class AlternateUser extends Authenticatable implements HasTokensContract
+{
+    use HasTokens;
+}
