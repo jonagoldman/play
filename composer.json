@@ -15,7 +15,7 @@
         "jonagoldman/laravel-auth": "dev-master",
         "jonagoldman/laravel-essentials": "dev-master",
         "jonagoldman/laravel-support": "dev-master",
-        "laravel/framework": "dev-12.x-opinionated as 12.51.0",
+        "laravel/framework": "dev-12.x-opinionated as 12.52.0",
         "laravel/tinker": "^2.11.0",
         "symfony/filesystem": "^8.0.1"
     },
@@ -36,7 +36,7 @@
     "repositories": [
         {
             "type": "git",
-            "url": "https://github.com/jonagoldman/laravel-framework"
+            "url": "https://github.com/deplox/laravel-framework"
         },
         {
             "type": "path",
