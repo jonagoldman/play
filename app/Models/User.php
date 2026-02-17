@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JonaGoldman\Auth\Concerns\HasTokens;
+use JonaGoldman\Auth\Contracts\HasTokens as HasTokensContract;
 use JonaGoldman\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
 
 /**
@@ -26,7 +27,7 @@ use JonaGoldman\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
  * @property-read CarbonInterface $updated_at
  */
 #[UseResource(UserResource::class)]
-final class User extends Authenticatable
+final class User extends Authenticatable implements HasTokensContract
 {
     use CanIncludeRelationships;
     use HasFactory;
