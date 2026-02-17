@@ -22,21 +22,28 @@ final class AuthenticateToken
     {
         $this->dispatcher->dispatch(new Attempting('dynamic', ['token' => $token], false));
 
+        $user = $this->resolve($token);
+
+        if (! $user) {
+            $this->dispatcher->dispatch(new Failed('dynamic', null, ['token' => $token]));
+        }
+
+        return $user;
+    }
+
+    private function resolve(string $token): ?Authenticatable
+    {
         /** @var class-string<\Illuminate\Database\Eloquent\Model> $tokenModel */
         $tokenModel = $this->config->tokenModel;
 
         $accessToken = $tokenModel::findByToken($token);
 
         if (! $accessToken) {
-            $this->dispatcher->dispatch(new Failed('dynamic', null, ['token' => $token]));
-
             return null;
         }
 
         if ($accessToken->expires_at && $accessToken->expires_at->isPast()) {
             $accessToken->delete();
-
-            $this->dispatcher->dispatch(new Failed('dynamic', null, ['token' => $token]));
 
             return null;
         }
@@ -44,9 +51,7 @@ final class AuthenticateToken
         /** @var Authenticatable|null $user */
         $user = $accessToken->user;
 
-        if (! $user) {
-            $this->dispatcher->dispatch(new Failed('dynamic', null, ['token' => $token]));
-
+        if (! $user instanceof $this->config->userModel) {
             return null;
         }
 
