@@ -9,8 +9,10 @@ use Illuminate\Auth\RequestGuard;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
+use JonaGoldman\Auth\Controllers\CsrfCookieController;
 use JonaGoldman\Auth\Guards\DynamicGuard;
 use JonaGoldman\Auth\Middlewares\StatefulFrontend;
 use Override;
@@ -41,6 +43,7 @@ final class AuthServiceProvider extends ServiceProvider
         ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
         ?Closure $validateUser = null,
         string $tokenPrefix = '',
+        string $csrfCookiePath = '/auth/csrf-cookie',
     ): void {
         self::$pendingConfig = [
             'tokenModel' => $tokenModel,
@@ -53,6 +56,7 @@ final class AuthServiceProvider extends ServiceProvider
             'defaultTokenExpiration' => $defaultTokenExpiration,
             'validateUser' => $validateUser,
             'tokenPrefix' => $tokenPrefix,
+            'csrfCookiePath' => $csrfCookiePath,
         ];
     }
 
@@ -103,5 +107,8 @@ final class AuthServiceProvider extends ServiceProvider
                 'session.secure' => $this->app->isProduction(),
             ]);
         }
+
+        Route::middleware(['api', StatefulFrontend::class])
+            ->get($config->csrfCookiePath, CsrfCookieController::class);
     }
 }

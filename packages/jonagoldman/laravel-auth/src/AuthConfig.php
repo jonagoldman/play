@@ -35,6 +35,7 @@ final class AuthConfig
         public readonly ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
         public readonly ?Closure $validateUser = null,
         public readonly string $tokenPrefix = '',
+        public readonly string $csrfCookiePath = '/auth/csrf-cookie',
     ) {
         if (! class_exists($tokenModel)) {
             throw new InvalidArgumentException("Token model [{$tokenModel}] does not exist.");
