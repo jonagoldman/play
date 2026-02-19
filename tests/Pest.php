@@ -2,6 +2,13 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -14,8 +21,25 @@ declare(strict_types=1);
 */
 
 pest()->extend(Tests\TestCase::class)
- // ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
+
+pest()->extend(Tests\TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->beforeEach(function (): void {
+        $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+            tokenModel: Token::class,
+            userModel: User::class,
+            statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
+            tokenPrefix: 'dpl_',
+            validateUser: fn ($user) => $user->verified_at !== null,
+        ));
+
+        Route::middleware('auth:dynamic')
+            ->get('/auth-test', fn (Request $request) => response()->json([
+                'id' => $request->user()->getKey(),
+            ]));
+    })
+    ->in('../packages/jonagoldman/laravel-auth/tests/Feature');
 
 /*
 |--------------------------------------------------------------------------

@@ -7,32 +7,32 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Requests\LoginRequest;
 use App\Requests\RegisterRequest;
-use App\Services\TokenService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
+use JonaGoldman\Auth\Actions\Login;
+use JonaGoldman\Auth\Actions\Logout;
 
 final readonly class AuthController
 {
     public function __construct(
         private UserService $userService,
-        private TokenService $tokenService,
+        private Login $login,
+        private Logout $logout,
     ) {}
 
     public function register(RegisterRequest $request): JsonResource
     {
         $user = $this->userService->createUser($request->validated(), dispatch: true);
 
-        $token = $this->tokenService->createToken($user, name: 'auth');
+        $token = $user->createToken(name: 'auth');
 
         return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
     }
 
     /**
-     * @throws ValidationException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function login(LoginRequest $request): JsonResource
     {
@@ -42,28 +42,15 @@ final readonly class AuthController
         /** @var string $password */
         $password = $request->validated('password');
 
-        if (! $user || ! Hash::check($password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => [__('auth.failed')],
-            ]);
-        }
+        $token = ($this->login)($user, $password, tokenName: 'auth');
 
-        $token = $this->tokenService->createToken($user, name: 'auth');
-
+        /** @var User $user */
         return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
     }
 
     public function logout(Request $request): Response
     {
-        /** @var User $user */
-        $user = $request->user();
-
-        if ($request->bearerToken() && $user->relationLoaded('token')) {
-            $user->token?->delete();
-        } else {
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
-        }
+        ($this->logout)($request);
 
         return response()->noContent();
     }

@@ -6,7 +6,6 @@ namespace App\Controllers;
 
 use App\Models\Token;
 use App\Models\User;
-use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -14,10 +13,6 @@ use Illuminate\Support\Facades\Gate;
 
 final readonly class UserTokenController
 {
-    public function __construct(
-        private TokenService $tokenService
-    ) {}
-
     public function index(User $user): ResourceCollection
     {
         Gate::authorize('list', [Token::class, $user]);
@@ -31,8 +26,7 @@ final readonly class UserTokenController
     {
         Gate::authorize('create', [Token::class, $user]);
 
-        return $this->tokenService
-            ->createToken($user)
+        return $user->createToken()
             ->toResource();
     }
 

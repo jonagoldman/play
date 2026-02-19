@@ -12,7 +12,6 @@ return new class extends Migration
     {
         Schema::create('tokens', function (Blueprint $table) {
             $table->ulid('id')->primary();
-            // $table->binary('id', length: 16, fixed: true)->primary();
             $table->foreignUlid('user_id')->index()->constrained();
             $table->string('name')->nullable();
             $table->string('type');

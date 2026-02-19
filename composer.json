@@ -55,7 +55,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "JonaGoldman\\Auth\\Tests\\": "packages/jonagoldman/laravel-auth/tests/"
         }
     },
     "scripts": {

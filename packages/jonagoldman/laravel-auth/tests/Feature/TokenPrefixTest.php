@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Models\Token;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use JonaGoldman\Auth\AuthConfig;
-
-uses(RefreshDatabase::class);
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
 
 test('decorateToken produces correct format with prefix', function (): void {
     $config = new AuthConfig(
@@ -104,7 +101,7 @@ test('authentication works with prefixed token', function (): void {
     expect($token->plain)->toStartWith('dpl_');
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertSuccessful();
 });
 
@@ -115,6 +112,6 @@ test('authentication rejects tampered prefixed token', function (): void {
     $tampered = mb_substr($token->plain, 0, -1).'X';
 
     $this->withToken($tampered, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 });

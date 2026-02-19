@@ -2,18 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Models\Token;
-use App\Models\User;
 use Illuminate\Auth\Events\Failed;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
-use JonaGoldman\Auth\Concerns\HasTokens;
-use JonaGoldman\Auth\Contracts\HasTokens as HasTokensContract;
-
-uses(RefreshDatabase::class);
+use JonaGoldman\Auth\Tests\Fixtures\AlternateUser;
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
 
 test('token authentication fails when user model does not match configured provider', function (): void {
     Event::fake([Failed::class]);
@@ -53,8 +48,3 @@ test('token authentication succeeds when user model matches configured provider'
     expect($result)->not->toBeNull()
         ->and($result->getKey())->toBe($user->getKey());
 });
-
-final class AlternateUser extends Authenticatable implements HasTokensContract
-{
-    use HasTokens;
-}

@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Models\Token;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
-
-uses(RefreshDatabase::class);
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
 
 test('createToken creates a bearer token with default expiration', function (): void {
     $user = User::factory()->create();

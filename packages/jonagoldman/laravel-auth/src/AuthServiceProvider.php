@@ -110,5 +110,11 @@ final class AuthServiceProvider extends ServiceProvider
 
         Route::middleware(['api', StatefulFrontend::class])
             ->get($config->csrfCookiePath, CsrfCookieController::class);
+
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        $this->publishesMigrations([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'laravel-auth-migrations');
     }
 }

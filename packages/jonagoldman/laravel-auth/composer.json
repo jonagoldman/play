@@ -22,7 +22,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "JonaGoldman\\Auth\\": "src/"
+            "JonaGoldman\\Auth\\": "src/",
+            "JonaGoldman\\Auth\\Database\\Factories\\": "database/factories/"
         }
     },
     "extra": {
