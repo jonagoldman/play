@@ -6,6 +6,7 @@ use App\Models\Token;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
 
 uses(RefreshDatabase::class);
@@ -42,9 +43,11 @@ test('createToken exposes plain attribute after creation', function (): void {
 
     $token = $user->createToken();
 
+    // 4 (prefix) + 48 (random) + 8 (crc32b) = 60
     expect($token->plain)
         ->toBeString()
-        ->toHaveLength(48);
+        ->toStartWith('dpl_')
+        ->toHaveLength(60);
 });
 
 test('createToken stores hashed token in database', function (): void {
@@ -52,16 +55,18 @@ test('createToken stores hashed token in database', function (): void {
 
     $token = $user->createToken();
 
+    $random = app(AuthConfig::class)->extractRandom($token->plain);
+
     $this->assertDatabaseHas('tokens', [
         'id' => $token->getKey(),
-        'token' => hash('sha256', $token->plain),
+        'token' => hash('sha256', $random),
     ]);
 });
 
 test('createToken with no default expiration creates token without expiry', function (): void {
     $user = User::factory()->create();
 
-    $this->app->singleton(JonaGoldman\Auth\AuthConfig::class, fn () => new JonaGoldman\Auth\AuthConfig(
+    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
         tokenModel: Token::class,
         userModel: User::class,
         defaultTokenExpiration: null,

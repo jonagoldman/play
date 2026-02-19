@@ -40,6 +40,7 @@ final class AuthServiceProvider extends ServiceProvider
         int $lastUsedAtDebounce = 300,
         ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
         ?Closure $validateUser = null,
+        string $tokenPrefix = '',
     ): void {
         self::$pendingConfig = [
             'tokenModel' => $tokenModel,
@@ -51,6 +52,7 @@ final class AuthServiceProvider extends ServiceProvider
             'lastUsedAtDebounce' => $lastUsedAtDebounce,
             'defaultTokenExpiration' => $defaultTokenExpiration,
             'validateUser' => $validateUser,
+            'tokenPrefix' => $tokenPrefix,
         ];
     }
 
