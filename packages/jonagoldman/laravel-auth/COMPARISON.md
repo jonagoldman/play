@@ -89,15 +89,11 @@ All three are absent. The first two matter for real-world customization. `acting
 Sanctum's polymorphic `tokenable` relationship lets any model type (User, Admin, Device) have tokens with one table.
 laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model. A second tokenable model would require a second table or refactor.
 
-### 3. No CSRF cookie endpoint
-Sanctum's `/sanctum/csrf-cookie` route initializes the CSRF cookie for SPA auth flows.
-Without it, first-party SPAs must manually set this up.
-
-### 4. No publishable config or migration
+### 3. No publishable config or migration
 Minor. The static `configure()` + `$pendingConfig` pattern is effectively global mutable state.
 A Laravel config file allows `env()` for deployment flexibility and is the conventional approach.
 
-### 6. Hardcoded middleware stack
+### 4. Hardcoded middleware stack
 Minor. Sanctum allows swapping `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session` middleware via config.
 laravel-auth hardcodes them.
 
@@ -122,7 +118,6 @@ laravel-auth hardcodes them.
 | Login event integration           | Minor improvement       |
 | No extension callbacks            | Significant regression  |
 | No MorphMany                      | Significant regression  |
-| No CSRF endpoint                  | Significant regression  |
 | No publishable config             | Minor regression        |
 | Hardcoded middleware              | Minor regression        |
 
