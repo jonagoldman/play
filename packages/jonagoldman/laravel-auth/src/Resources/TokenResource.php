@@ -2,16 +2,28 @@
 
 declare(strict_types=1);
 
-namespace App\Resources;
+namespace JonaGoldman\Auth\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Models\Token
+ * @property-read string $id
+ * @property-read string $user_id
+ * @property-read string|null $name
+ * @property-read \JonaGoldman\Auth\Enums\TokenType $type
+ * @property-read string|null $plain
+ * @property-read bool $expired
+ * @property-read \Carbon\CarbonImmutable|null $expires_at
+ * @property-read \Carbon\CarbonImmutable|null $last_used_at
+ * @property-read \Carbon\CarbonImmutable|null $created_at
+ * @property-read \Carbon\CarbonImmutable|null $updated_at
  */
 final class TokenResource extends JsonResource
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(Request $request): array
     {
         return [

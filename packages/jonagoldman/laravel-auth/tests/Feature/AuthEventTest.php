@@ -2,17 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Models\Token;
-use App\Models\User;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use JonaGoldman\Auth\Events\TokenAuthenticated;
-
-uses(RefreshDatabase::class);
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
 
 test('token authentication dispatches Attempting and TokenAuthenticated events', function (): void {
     Event::fake([Attempting::class, TokenAuthenticated::class, Login::class]);
@@ -21,7 +18,7 @@ test('token authentication dispatches Attempting and TokenAuthenticated events',
     $token = Token::factory()->for($user)->create();
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertSuccessful();
 
     Event::assertDispatched(Attempting::class, fn (Attempting $e) => $e->guard === 'dynamic');
@@ -33,7 +30,7 @@ test('failed token authentication dispatches Failed event', function (): void {
     Event::fake([Attempting::class, Failed::class]);
 
     $this->withToken('invalid-token', 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 
     Event::assertDispatched(Attempting::class);
@@ -49,7 +46,7 @@ test('expired token dispatches Failed event', function (): void {
     ]);
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 
     Event::assertDispatched(Failed::class);
@@ -62,7 +59,7 @@ test('token authentication dispatches Login event', function (): void {
     $token = Token::factory()->for($user)->create();
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertSuccessful();
 
     Event::assertDispatched(Login::class, fn (Login $e) => $e->guard === 'dynamic');

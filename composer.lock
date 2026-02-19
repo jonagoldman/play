@@ -1058,7 +1058,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/jonagoldman/laravel-auth",
-                "reference": "a2d6f096c69146607fcd171c00e7577bb0cce661"
+                "reference": "c5200fe80539762a960c97b7d1c90147e98ed164"
             },
             "require": {
                 "laravel/framework": "dev-12.x-opinionated as 12.52.0",
@@ -1074,7 +1074,8 @@
             },
             "autoload": {
                 "psr-4": {
-                    "JonaGoldman\\Auth\\": "src/"
+                    "JonaGoldman\\Auth\\": "src/",
+                    "JonaGoldman\\Auth\\Database\\Factories\\": "database/factories/"
                 }
             },
             "license": [
@@ -1178,7 +1179,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/deplox/laravel-framework",
-                "reference": "d4e712e5ae51ce115a5ab56b0c25f6d33a7b4364"
+                "reference": "8975cad9e661f4eff94e7506073a1cdc0edc69b0"
             },
             "require": {
                 "brick/math": "^0.11|^0.12|^0.13|^0.14",
@@ -1393,7 +1394,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-02-17T22:48:00+00:00"
+            "time": "2026-02-16T20:27:01+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -6806,16 +6807,16 @@
         },
         {
             "name": "laravel/boost",
-            "version": "v2.1.6",
+            "version": "v2.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/boost.git",
-                "reference": "b8923e6131e5b705da299891284d327562445618"
+                "reference": "3f999986f9dc0f1faa9a6607739e938d551e27df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/boost/zipball/b8923e6131e5b705da299891284d327562445618",
-                "reference": "b8923e6131e5b705da299891284d327562445618",
+                "url": "https://api.github.com/repos/laravel/boost/zipball/3f999986f9dc0f1faa9a6607739e938d551e27df",
+                "reference": "3f999986f9dc0f1faa9a6607739e938d551e27df",
                 "shasum": ""
             },
             "require": {
@@ -6868,7 +6869,7 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2026-02-16T23:53:14+00:00"
+            "time": "2026-02-18T12:19:28+00:00"
         },
         {
             "name": "laravel/mcp",
@@ -8762,16 +8763,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.3.6",
+            "version": "2.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "ca9ebb81d280cd362ea39474dabd42679e32ca6b"
+                "reference": "9c46ad17f57963932c9788fd1b0f1d07ff450370"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/ca9ebb81d280cd362ea39474dabd42679e32ca6b",
-                "reference": "ca9ebb81d280cd362ea39474dabd42679e32ca6b",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/9c46ad17f57963932c9788fd1b0f1d07ff450370",
+                "reference": "9c46ad17f57963932c9788fd1b0f1d07ff450370",
                 "shasum": ""
             },
             "require": {
@@ -8810,7 +8811,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.3.6"
+                "source": "https://github.com/rectorphp/rector/tree/2.3.7"
             },
             "funding": [
                 {
@@ -8818,7 +8819,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-06T14:25:06+00:00"
+            "time": "2026-02-19T14:44:16+00:00"
         },
         {
             "name": "sebastian/cli-parser",

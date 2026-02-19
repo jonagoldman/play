@@ -2,23 +2,17 @@
 
 declare(strict_types=1);
 
-use App\Models\Token;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use JonaGoldman\Auth\Tests\Fixtures\Token;
+use JonaGoldman\Auth\Tests\Fixtures\User;
 
-uses(RefreshDatabase::class);
-
-test('tokens get a default expiration when none provided', function (): void {
+test('createToken sets a default expiration', function (): void {
     $user = User::factory()->create();
 
-    $this->actingAs($user, 'dynamic')
-        ->postJson("/api/users/{$user->id}/tokens")
-        ->assertSuccessful()
-        ->assertJsonPath('data.expired', false);
+    $token = $user->createToken();
 
-    $token = Token::query()->where('user_id', $user->id)->latest()->first();
-    expect($token->expires_at)->not->toBeNull();
+    expect($token->expires_at)->not->toBeNull()
+        ->and($token->expired)->toBeFalse();
 });
 
 test('expired tokens are deleted on authentication attempt', function (): void {
@@ -28,7 +22,7 @@ test('expired tokens are deleted on authentication attempt', function (): void {
     ]);
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 
     $this->assertDatabaseMissing('tokens', ['id' => $token->getKey()]);
@@ -41,7 +35,7 @@ test('expired tokens return 401', function (): void {
     ]);
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 });
 
@@ -52,7 +46,7 @@ test('non-expired tokens authenticate successfully', function (): void {
     ]);
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertSuccessful();
 });
 
@@ -61,6 +55,6 @@ test('unverified users cannot authenticate via token', function (): void {
     $token = Token::factory()->for($user)->create();
 
     $this->withToken($token->plain, 'Bearer')
-        ->getJson('/api/user')
+        ->getJson('/auth-test')
         ->assertUnauthorized();
 });

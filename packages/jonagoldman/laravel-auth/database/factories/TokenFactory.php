@@ -2,25 +2,27 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace JonaGoldman\Auth\Database\Factories;
 
-use App\Models\Token;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
 
 /**
- * @extends Factory<Token>
+ * @extends Factory<Model>
  */
 final class TokenFactory extends Factory
 {
     public function configure(): static
     {
-        return $this->afterCreating(function (Token $token): void {
-            if ($token->plain !== null) {
+        return $this->afterCreating(function (Model $token): void {
+            $plain = $token->getAttribute('plain');
+
+            if (method_exists($token, 'setPlain') && is_string($plain)) {
                 $config = app(AuthConfig::class);
-                $token->setPlain($config->decorateToken($token->plain));
+                $token->setPlain($config->decorateToken($plain));
             }
         });
     }
