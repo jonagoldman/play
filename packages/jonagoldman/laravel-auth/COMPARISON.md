@@ -93,11 +93,7 @@ laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model. A secon
 Sanctum's `/sanctum/csrf-cookie` route initializes the CSRF cookie for SPA auth flows.
 Without it, first-party SPAs must manually set this up.
 
-### 4. No token prefix + CRC32 checksum
-Sanctum's `generateTokenString()` supports a configurable prefix (e.g., `myapp_`) for GitHub secret scanning integration and appends a CRC32 checksum.
-laravel-auth just does `Str::random()`. The secret scanning integration is a real security feature for public repositories.
-
-### 5. No publishable config or migration
+### 4. No publishable config or migration
 Minor. The static `configure()` + `$pendingConfig` pattern is effectively global mutable state.
 A Laravel config file allows `env()` for deployment flexibility and is the conventional approach.
 
@@ -127,7 +123,6 @@ laravel-auth hardcodes them.
 | No extension callbacks            | Significant regression  |
 | No MorphMany                      | Significant regression  |
 | No CSRF endpoint                  | Significant regression  |
-| No token prefix/CRC32             | Significant regression  |
 | No publishable config             | Minor regression        |
 | Hardcoded middleware              | Minor regression        |
 

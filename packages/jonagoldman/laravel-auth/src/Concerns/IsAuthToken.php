@@ -17,6 +17,8 @@ use function hash;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
+ *
+ * @property-read string|null $plain
  */
 trait IsAuthToken
 {
@@ -34,16 +36,27 @@ trait IsAuthToken
     }
 
     /**
-     * Find a token by its raw value.
+     * Find a token by its raw value (decorated or plain).
      */
     public static function findByToken(string $token): ?static
     {
-        if (empty($token)) {
+        if ($token === '') {
+            return null;
+        }
+
+        $random = app(AuthConfig::class)->extractRandom($token);
+
+        if ($random === null) {
             return null;
         }
 
         /** @var static|null */
-        return static::query()->where('token', hash('sha256', $token))->first();
+        return static::query()->where('token', hash('sha256', $random))->first();
+    }
+
+    public function setPlain(string $value): void
+    {
+        $this->plain = $value;
     }
 
     public function initializeIsAuthToken(): void

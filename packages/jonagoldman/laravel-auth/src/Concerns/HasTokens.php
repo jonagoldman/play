@@ -34,11 +34,17 @@ trait HasTokens
             ? now()->addSeconds($config->defaultTokenExpiration)
             : null;
 
-        return $this->tokens()->create([
+        $random = $type->generate();
+
+        $token = $this->tokens()->create([
             'name' => $name,
             'type' => $type,
-            'token' => $type->generate(),
+            'token' => $random,
             'expires_at' => $expiresAt,
         ]);
+
+        $token->setPlain($config->decorateToken($random));
+
+        return $token;
     }
 }
