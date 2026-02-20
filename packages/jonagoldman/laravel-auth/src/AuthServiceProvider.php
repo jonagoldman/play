@@ -48,8 +48,7 @@ final class AuthServiceProvider extends ServiceProvider
     public function boot(Kernel $kernel, Auth $auth): void
     {
         $auth->viaRequest(
-            'dynamic',
-            fn (Request $request) => $this->app->make(DynamicGuard::class)($request)
+            'dynamic', fn (Request $request) => $this->app->make(DynamicGuard::class)($request)
         );
 
         $kernel->prependToMiddlewarePriority(StatefulFrontend::class);
