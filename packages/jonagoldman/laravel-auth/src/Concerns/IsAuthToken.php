@@ -18,6 +18,8 @@ use function hash;
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
  *
+ * @see \JonaGoldman\Auth\Contracts\IsAuthToken
+ *
  * @property-read string|null $plain
  */
 trait IsAuthToken

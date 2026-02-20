@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Contracts\IsAuthToken;
 use JonaGoldman\Auth\Enums\TokenType;
 
 /**
@@ -20,7 +21,7 @@ final class TokenFactory extends Factory
         return $this->afterCreating(function (Model $token): void {
             $plain = $token->getAttribute('plain');
 
-            if (method_exists($token, 'setPlain') && is_string($plain)) {
+            if ($token instanceof IsAuthToken && is_string($plain)) {
                 $config = app(AuthConfig::class);
                 $token->setPlain($config->decorateToken($plain));
             }
