@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth;
 
-use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -17,53 +16,22 @@ use Override;
 
 final class AuthServiceProvider extends ServiceProvider
 {
-    /** @var array<string, mixed> */
-    private static array $pendingConfig = [];
-
     /**
-     * Configure the auth package before registration.
-     *
-     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $tokenModel
-     * @param  class-string<\Illuminate\Contracts\Auth\Authenticatable>  $userModel
-     * @param  list<string>  $guards
-     * @param  list<string>  $statefulDomains
-     * @param  ?int  $defaultTokenExpiration  Default token expiration in seconds (null = no default)
-     * @param  ?Closure(\Illuminate\Contracts\Auth\Authenticatable): bool  $validateUser
+     * @var \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application
      */
-    public static function configure(
-        string $tokenModel,
-        string $userModel,
-        array $guards = ['session'],
-        array $statefulDomains = [],
-        bool $secureCookies = true,
-        int $pruneDays = 30,
-        int $lastUsedAtDebounce = 300,
-        ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
-        ?Closure $validateUser = null,
-        string $tokenPrefix = '',
-        string $csrfCookiePath = '/auth/csrf-cookie',
-    ): void {
-        self::$pendingConfig = [
-            'tokenModel' => $tokenModel,
-            'userModel' => $userModel,
-            'guards' => $guards,
-            'statefulDomains' => $statefulDomains,
-            'secureCookies' => $secureCookies,
-            'pruneDays' => $pruneDays,
-            'lastUsedAtDebounce' => $lastUsedAtDebounce,
-            'defaultTokenExpiration' => $defaultTokenExpiration,
-            'validateUser' => $validateUser,
-            'tokenPrefix' => $tokenPrefix,
-            'csrfCookiePath' => $csrfCookiePath,
-        ];
+    protected $app;
+
+    private static ?AuthConfig $pendingConfig = null;
+
+    public static function configure(AuthConfig $config): void
+    {
+        self::$pendingConfig = $config;
     }
 
     #[Override]
     public function register(): void
     {
-        $this->app->singleton(AuthConfig::class, function (): AuthConfig {
-            return new AuthConfig(...self::$pendingConfig);
-        });
+        $this->app->singleton(AuthConfig::class, fn (): AuthConfig => self::$pendingConfig);
 
         config([
             'auth.guards.dynamic' => array_merge([

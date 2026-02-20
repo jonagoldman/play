@@ -73,12 +73,12 @@ $router->prefix('api')
 Configured in `AppServiceProvider::register()`:
 
 ```php
-AuthServiceProvider::configure(
+AuthServiceProvider::configure(new AuthConfig(
     tokenModel: Token::class,
     userModel: User::class,
     guards: ['session'],
     statefulDomains: ['localhost', '...', 'play.ddev.site'],
-);
+));
 ```
 
 **DynamicGuard flow:** Tries each configured guard (session) first. If none authenticate, falls back to bearer token via `AuthenticateToken`. Tokens are plain random strings (48 chars for bearer, 60 chars for remember). Stored as SHA256 hash, looked up via `WHERE token = hash(secret)`. Checks `expires_at`, updates `last_used_at` with debounce, dispatches `TokenAuthenticated` event.
@@ -422,7 +422,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 # Laravel Pint Code Formatter
 
-- You must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
+- If you have modified any PHP files, you must run `vendor/bin/pint --dirty --format agent` before finalizing changes to ensure your code matches the project's expected style.
 - Do not run `vendor/bin/pint --test --format agent`, simply run `vendor/bin/pint --format agent` to fix any formatting issues.
 
 === pest/core rules ===
