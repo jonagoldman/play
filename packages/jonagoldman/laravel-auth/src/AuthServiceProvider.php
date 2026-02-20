@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace JonaGoldman\Auth;
 
 use Closure;
-use Illuminate\Auth\RequestGuard;
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\Controllers\CsrfCookieController;
 use JonaGoldman\Auth\Guards\DynamicGuard;
 use JonaGoldman\Auth\Middlewares\StatefulFrontend;
@@ -81,19 +79,10 @@ final class AuthServiceProvider extends ServiceProvider
      */
     public function boot(Kernel $kernel, Auth $auth): void
     {
-        $auth->extend('dynamic', fn ($app, $name, array $config) => tap(
-            new RequestGuard(
-                new DynamicGuard(
-                    $auth,
-                    $app->make(AuthConfig::class),
-                    $app->make(AuthenticateToken::class),
-                    $app->make(DispatcherContract::class),
-                ),
-                $app['request'],
-                $auth->createUserProvider($config['provider'] ?? null),
-            ),
-            fn (RequestGuard $guard) => $this->app->refresh('request', $guard, 'setRequest'),
-        ));
+        $auth->viaRequest(
+            'dynamic',
+            fn (Request $request) => $this->app->make(DynamicGuard::class)($request)
+        );
 
         $kernel->prependToMiddlewarePriority(StatefulFrontend::class);
 
