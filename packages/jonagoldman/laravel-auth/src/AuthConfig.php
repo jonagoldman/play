@@ -7,8 +7,8 @@ namespace JonaGoldman\Auth;
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
 use InvalidArgumentException;
-use JonaGoldman\Auth\Concerns\IsAuthToken;
 use JonaGoldman\Auth\Contracts\HasTokens;
+use JonaGoldman\Auth\Contracts\IsAuthToken;
 
 use function hash;
 use function mb_strlen;
@@ -37,12 +37,8 @@ final class AuthConfig
         public readonly string $tokenPrefix = '',
         public readonly string $csrfCookiePath = '/auth/csrf-cookie',
     ) {
-        if (! class_exists($tokenModel)) {
-            throw new InvalidArgumentException("Token model [{$tokenModel}] does not exist.");
-        }
-
-        if (! in_array(IsAuthToken::class, class_uses_recursive($tokenModel), true)) {
-            throw new InvalidArgumentException("Token model [{$tokenModel}] must use the IsAuthToken trait.");
+        if (! is_subclass_of($tokenModel, IsAuthToken::class)) {
+            throw new InvalidArgumentException("Token model [{$tokenModel}] must implement the IsAuthToken contract.");
         }
 
         if (! class_exists($userModel)) {

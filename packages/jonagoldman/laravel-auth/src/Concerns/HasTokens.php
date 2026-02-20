@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Contracts\IsAuthToken as IsAuthTokenContract;
 use JonaGoldman\Auth\Enums\TokenType;
 
 /**
@@ -26,7 +27,7 @@ trait HasTokens
         return $this->hasMany(app(AuthConfig::class)->tokenModel);
     }
 
-    public function createToken(TokenType $type = TokenType::Bearer, ?DateTimeInterface $expiresAt = null, ?string $name = null): Model
+    public function createToken(TokenType $type = TokenType::Bearer, ?DateTimeInterface $expiresAt = null, ?string $name = null): Model&IsAuthTokenContract
     {
         $config = app(AuthConfig::class);
 

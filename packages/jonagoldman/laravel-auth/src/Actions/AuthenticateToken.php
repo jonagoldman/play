@@ -33,7 +33,7 @@ final class AuthenticateToken
 
     private function resolve(string $token): ?Authenticatable
     {
-        /** @var class-string<\Illuminate\Database\Eloquent\Model> $tokenModel */
+        /** @var class-string<\Illuminate\Database\Eloquent\Model&\JonaGoldman\Auth\Contracts\IsAuthToken> $tokenModel */
         $tokenModel = $this->config->tokenModel;
 
         $accessToken = $tokenModel::findByToken($token);

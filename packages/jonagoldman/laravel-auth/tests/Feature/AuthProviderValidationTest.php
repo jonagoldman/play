@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
@@ -29,6 +30,13 @@ test('token authentication fails when user model does not match configured provi
     expect($result)->toBeNull();
 
     Event::assertDispatched(Failed::class, fn (Failed $e) => $e->guard === 'dynamic');
+});
+
+test('auth config rejects token model not implementing the contract', function (): void {
+    expect(fn () => new AuthConfig(
+        tokenModel: Model::class,
+        userModel: User::class,
+    ))->toThrow(InvalidArgumentException::class, 'must implement the IsAuthToken contract');
 });
 
 test('token authentication succeeds when user model matches configured provider', function (): void {

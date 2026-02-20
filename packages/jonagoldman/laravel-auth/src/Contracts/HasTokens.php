@@ -16,5 +16,5 @@ interface HasTokens
 
     public function tokens(): HasMany;
 
-    public function createToken(TokenType $type = TokenType::Bearer, ?DateTimeInterface $expiresAt = null, ?string $name = null): Model;
+    public function createToken(TokenType $type = TokenType::Bearer, ?DateTimeInterface $expiresAt = null, ?string $name = null): Model&IsAuthToken;
 }
