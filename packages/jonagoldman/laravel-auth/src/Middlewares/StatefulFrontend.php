@@ -63,14 +63,12 @@ final class StatefulFrontend
      */
     private function frontendMiddleware(): array
     {
-        $middleware = array_values(array_filter(array_unique([
-            'encrypt_cookies' => \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        return array_values(array_filter(array_unique([
+            'encrypt_cookies' => $this->config->middlewares['encrypt_cookies'],
             'response_cookies' => \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             'start_session' => \Illuminate\Session\Middleware\StartSession::class,
-            'verify_csrf_token' => \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-            'authenticate_session' => AuthenticateSession::class,
+            'validate_csrf_token' => $this->config->middlewares['validate_csrf_token'],
+            'authenticate_session' => $this->config->middlewares['authenticate_session'],
         ])));
-
-        return $middleware;
     }
 }
