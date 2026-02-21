@@ -29,7 +29,7 @@ final class AppServiceProvider extends ServiceProvider
     {
         JsonApiResource::configure(version: '2.0.0');
 
-        AuthServiceProvider::configure(new AuthConfig(
+        AuthServiceProvider::configure($this->app, new AuthConfig(
             tokenModel: Token::class,
             userModel: User::class,
             guards: ['session'],
