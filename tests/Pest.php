@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
 
@@ -26,11 +26,11 @@ pest()->extend(Tests\TestCase::class)
 pest()->extend(Tests\TestCase::class)
     ->use(RefreshDatabase::class)
     ->beforeEach(function (): void {
-        $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+        $this->app->singleton(Shield::class, fn () => new Shield(
             tokenModel: Token::class,
             userModel: User::class,
             statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
-            tokenPrefix: 'dpl_',
+            prefix: 'dpl_',
             validateUser: fn ($user) => $user->verified_at !== null,
         ));
 

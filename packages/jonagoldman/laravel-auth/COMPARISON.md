@@ -43,9 +43,9 @@ but also tied to the now-removed global expiration concept.
 **Improvement.** Extracting token validation from the Guard into an invokable action is cleaner separation.
 Independently testable, reusable, and the Guard stays focused on orchestration.
 
-### 6. AuthConfig DTO with constructor injection
+### 6. Shield as central entry point
 
-**Improvement.** Type-safe, validates at construction time (catches misconfiguration early), easier to mock in tests.
+**Improvement.** Type-safe singleton that holds all configuration, boot logic, and token-prefix methods. Validates at construction time (catches misconfiguration early), easier to mock in tests.
 Replaces scattered `config()` calls and Sanctum's static properties.
 
 ### 7. TokenType enum (Bearer vs Remember)
@@ -89,17 +89,17 @@ The `pruneDays` config handles bulk cleanup of tokens that never get hit again.
 
 ### 14. Container-bound config (no static state)
 
-**Clear improvement.** `configure()` accepts the `Application` instance and binds `AuthConfig` as a singleton directly into the container.
+**Clear improvement.** `Shield::configure()` accepts the `Application` instance and binds `Shield` as a singleton directly into the container.
 No static mutable state, no `$pendingConfig` bridging — standard Laravel DI from the start.
 
 ### 15. Configurable middleware stack
 
-**Clear improvement.** `AuthConfig::$middlewares` accepts overrides for `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session`.
+**Clear improvement.** `Shield::$middlewares` accepts overrides for `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session`.
 Set a key to `null` to remove it. Sanctum's fork hardcodes the middleware list with no override mechanism.
 
-### 16. Extension callbacks via AuthConfig closures
+### 16. Extension callbacks via Shield closures
 
-**Clear improvement.** Three extension points matching Sanctum's capabilities, implemented as typed closures on the `AuthConfig` DTO:
+**Clear improvement.** Three extension points matching Sanctum's capabilities, implemented as typed closures on the `Shield` singleton:
 
 - `$extractToken` — custom token extraction (e.g., from query param, custom header). Non-nullable with a default that returns `bearerToken()`. Override to fully own extraction — compose the fallback yourself if needed.
 - `$validateToken` — custom token validation (e.g., IP allowlisting). Non-nullable with a default that returns `true` (no-op). Receives the token model and request, runs after standard checks but before `$validateUser`.
@@ -139,7 +139,7 @@ laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model.
 | Debounced writes                | Clear improvement      |
 | MassPrunable                    | Clear improvement      |
 | Action class                    | Clear improvement      |
-| AuthConfig DTO                  | Clear improvement      |
+| Shield entry point              | Clear improvement      |
 | TokenType enum                  | Clear improvement      |
 | Null token (no TransientToken)  | Clear improvement      |
 | ULIDs                           | Clear improvement      |

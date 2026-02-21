@@ -9,8 +9,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 
 use function hash;
@@ -46,7 +46,7 @@ trait IsAuthToken
             return null;
         }
 
-        $random = app(AuthConfig::class)->extractRandom($token);
+        $random = app(Shield::class)->extractRandom($token);
 
         if ($random === null) {
             return null;
@@ -81,7 +81,7 @@ trait IsAuthToken
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(app(AuthConfig::class)->userModel);
+        return $this->belongsTo(app(Shield::class)->userModel);
     }
 
     /**
@@ -89,7 +89,7 @@ trait IsAuthToken
      */
     public function touchLastUsedAt(): void
     {
-        $debounce = app(AuthConfig::class)->lastUsedAtDebounce;
+        $debounce = app(Shield::class)->lastUsedAtDebounce;
 
         if ($this->last_used_at && $this->last_used_at->diffInSeconds(now()) < $debounce) {
             return;
@@ -112,7 +112,7 @@ trait IsAuthToken
      */
     public function prunable(): Builder
     {
-        $pruneDays = app(AuthConfig::class)->pruneDays;
+        $pruneDays = app(Shield::class)->pruneDays;
 
         return static::query()
             ->whereNotNull('expires_at')

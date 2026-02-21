@@ -13,8 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Auth\AuthConfig;
-use JonaGoldman\Auth\AuthServiceProvider;
+use JonaGoldman\Auth\Shield;
 use Override;
 
 final class AppServiceProvider extends ServiceProvider
@@ -29,13 +28,13 @@ final class AppServiceProvider extends ServiceProvider
     {
         JsonApiResource::configure(version: '2.0.0');
 
-        AuthServiceProvider::configure($this->app, new AuthConfig(
+        Shield::configure($this->app, new Shield(
             tokenModel: Token::class,
             userModel: User::class,
             guards: ['session'],
             statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
+            prefix: 'dpl_',
             validateUser: fn (User $user): bool => $user->verified_at !== null,
-            tokenPrefix: 'dpl_',
         ));
     }
 

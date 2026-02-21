@@ -5,28 +5,12 @@ declare(strict_types=1);
 namespace JonaGoldman\Auth;
 
 use Illuminate\Contracts\Auth\Factory as Auth;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Auth\Controllers\CsrfCookieController;
-use JonaGoldman\Auth\Guards\DynamicGuard;
-use JonaGoldman\Auth\Middlewares\StatefulFrontend;
 use Override;
 
 final class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * @var Application|\Illuminate\Foundation\Application
-     */
-    protected $app;
-
-    public static function configure(Application $app, AuthConfig $config): void
-    {
-        $app->singleton(AuthConfig::class, fn (): AuthConfig => $config);
-    }
-
     #[Override]
     public function register(): void
     {
@@ -44,25 +28,7 @@ final class AuthServiceProvider extends ServiceProvider
      */
     public function boot(Kernel $kernel, Auth $auth): void
     {
-        $auth->viaRequest(
-            'dynamic', fn (Request $request) => $this->app->make(DynamicGuard::class)($request)
-        );
-
-        $kernel->prependToMiddlewarePriority(StatefulFrontend::class);
-
-        /** @var AuthConfig $config */
-        $config = $this->app->make(AuthConfig::class);
-
-        if ($config->secureCookies) {
-            config([
-                'session.http_only' => true,
-                'session.same_site' => 'lax',
-                'session.secure' => $this->app->isProduction(),
-            ]);
-        }
-
-        Route::middleware(['api', StatefulFrontend::class])
-            ->get($config->csrfCookiePath, CsrfCookieController::class);
+        $this->app->make(Shield::class)->boot($this->app, $kernel, $auth);
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 

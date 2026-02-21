@@ -8,13 +8,13 @@ use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Validation\ValidationException;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 
 final class Login
 {
     public function __construct(
         private AuthFactory $auth,
-        private AuthConfig $config,
+        private Shield $shield,
     ) {}
 
     /**
@@ -27,7 +27,7 @@ final class Login
         $guard = $this->guard();
 
         $success = $stateful
-            ? $guard->attemptWhen($credentials, array_filter([$this->config->validateUser]))
+            ? $guard->attemptWhen($credentials, [$this->shield->validateUser])
             : $this->validate($guard, $credentials);
 
         if (! $success) {
@@ -48,7 +48,7 @@ final class Login
             return false;
         }
 
-        if ($this->config->validateUser && ! ($this->config->validateUser)($guard->user())) {
+        if (! ($this->shield->validateUser)($guard->user())) {
             return false;
         }
 
@@ -57,7 +57,7 @@ final class Login
 
     private function guard(): SessionGuard
     {
-        $name = $this->config->guards[0] ?? 'session';
+        $name = $this->shield->guards[0] ?? 'session';
 
         /** @var SessionGuard */
         return $this->auth->guard($name);

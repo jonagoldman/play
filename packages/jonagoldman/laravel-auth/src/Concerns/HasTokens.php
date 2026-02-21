@@ -8,9 +8,9 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Contracts\IsAuthToken as IsAuthTokenContract;
 use JonaGoldman\Auth\Enums\TokenType;
+use JonaGoldman\Auth\Shield;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
@@ -24,15 +24,15 @@ trait HasTokens
 
     public function tokens(): HasMany
     {
-        return $this->hasMany(app(AuthConfig::class)->tokenModel);
+        return $this->hasMany(app(Shield::class)->tokenModel);
     }
 
     public function createToken(TokenType $type = TokenType::Bearer, ?DateTimeInterface $expiresAt = null, ?string $name = null): Model&IsAuthTokenContract
     {
-        $config = app(AuthConfig::class);
+        $shield = app(Shield::class);
 
-        $expiresAt ??= $config->defaultTokenExpiration !== null
-            ? now()->addSeconds($config->defaultTokenExpiration)
+        $expiresAt ??= $shield->defaultTokenExpiration !== null
+            ? now()->addSeconds($shield->defaultTokenExpiration)
             : null;
 
         $random = $type->generate();
@@ -44,7 +44,7 @@ trait HasTokens
             'expires_at' => $expiresAt,
         ]);
 
-        $token->setPlain($config->decorateToken($random));
+        $token->setPlain($shield->decorateToken($random));
 
         return $token;
     }

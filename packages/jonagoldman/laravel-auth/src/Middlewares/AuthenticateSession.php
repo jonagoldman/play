@@ -10,7 +10,7 @@ use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 use Symfony\Component\HttpFoundation\Response;
 
 final class AuthenticateSession
@@ -20,7 +20,7 @@ final class AuthenticateSession
      */
     public function __construct(
         private AuthFactory $auth,
-        private AuthConfig $config,
+        private Shield $shield,
     ) {}
 
     /**
@@ -36,7 +36,7 @@ final class AuthenticateSession
             return $next($request);
         }
 
-        $guards = Collection::make($this->config->guards)
+        $guards = Collection::make($this->shield->guards)
             ->mapWithKeys(fn ($guard) => [$guard => $this->auth->guard($guard)])
             ->filter(fn ($guard) => $guard instanceof SessionGuard);
 
