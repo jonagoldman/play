@@ -87,7 +87,18 @@ All three are absent. The first two matter for real-world customization. `acting
 
 ### 2. HasMany instead of MorphMany (polymorphic)
 Sanctum's polymorphic `tokenable` relationship lets any model type (User, Admin, Device) have tokens with one table.
-laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model. A second tokenable model would require a second table or refactor.
+laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model.
+
+**Real-world use cases where polymorphic tokens matter:**
+- **Multi-guard / multi-model auth** — applications with separate `User`, `Admin`, or `Customer` models that each need API tokens
+- **Machine-to-machine / service tokens** — `Team`, `Organization`, or `Application` models issuing tokens for automated integrations
+- **Device tokens** — IoT devices, terminals, or kiosks authenticating independently of a user
+- **OAuth client credentials** — a `Client` model holding its own bearer tokens
+- **Service accounts / bot accounts** — non-human identities that don't fit the user model
+
+**Why it matters:** Adding a second tokenable type after launch requires either a new token table (duplicating schema and logic) or migrating the existing `user_id` foreign key to polymorphic `tokenable_id`/`tokenable_type` columns — both are breaking changes that touch migrations, relationships, and queries.
+
+**The deliberate trade-off:** A direct foreign key (`user_id`) provides referential integrity enforced at the database level and simpler queries (no `WHERE tokenable_type = ...` filtering). For single-user-model applications — which are the majority — this is a genuine simplification, not a regression. The cost only surfaces when a second tokenable model is introduced.
 
 ### 3. No publishable config or migration
 Minor. The static `configure()` + `$pendingConfig` pattern is effectively global mutable state.

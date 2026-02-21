@@ -11,6 +11,7 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JonaGoldman\Auth\Actions\Login;
 use JonaGoldman\Auth\Actions\Logout;
 
@@ -26,6 +27,12 @@ final readonly class AuthController
     {
         $user = $this->userService->createUser($request->validated(), dispatch: true);
 
+        if ($request->hasSession()) {
+            Auth::guard('session')->login($user);
+
+            return $user->toResource();
+        }
+
         $token = $user->createToken(name: 'auth');
 
         return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
@@ -36,16 +43,16 @@ final readonly class AuthController
      */
     public function login(LoginRequest $request): JsonResource
     {
-        /** @var User|null $user */
-        $user = User::query()->where('email', $request->validated('email'))->first();
-
-        /** @var string $password */
-        $password = $request->validated('password');
-
-        $token = ($this->login)($user, $password, tokenName: 'auth');
-
         /** @var User $user */
-        return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
+        $user = ($this->login)($request->validated(), stateful: $request->hasSession());
+
+        if (! $request->hasSession()) {
+            $token = $user->createToken(name: 'auth');
+
+            return $user->setRelation('tokens', $user->newCollection([$token]))->toResource();
+        }
+
+        return $user->toResource();
     }
 
     public function logout(Request $request): Response

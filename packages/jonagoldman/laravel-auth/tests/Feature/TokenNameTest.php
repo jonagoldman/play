@@ -29,13 +29,13 @@ test('token name appears in resource output', function (): void {
         ->toHaveKey('name', 'API Token');
 });
 
-test('login action creates tokens with custom name', function (): void {
+test('login action returns authenticated user', function (): void {
     $user = User::factory()->create(['password' => 'password123']);
 
-    $login = new Login;
-    $token = $login($user, 'password123', tokenName: 'auth');
+    $login = app(Login::class);
+    $result = $login(['email' => $user->email, 'password' => 'password123']);
 
-    expect($token->name)->toBe('auth');
+    expect($result->getKey())->toBe($user->getKey());
 });
 
 test('tokens can be created without a name', function (): void {
