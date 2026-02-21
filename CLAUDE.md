@@ -34,7 +34,7 @@ pnpm build                # Production build
 
 Three local packages symlinked via Composer path repositories:
 
-- **laravel-auth** — Token-based authentication: `DynamicGuard` (session-first, bearer fallback), `AuthenticateToken` action, `TokenType` enum (`Bearer`, `Remember`). Provides `auth:dynamic` guard. Key trait: `HasTokens`.
+- **laravel-auth** — Token-based authentication with `Shield` as the central entry point (configuration, boot logic, token-prefix methods). `DynamicGuard` (session-first, bearer fallback), `AuthenticateToken` action, `TokenType` enum (`Bearer`, `Remember`). Provides `auth:dynamic` guard. Key trait: `HasTokens`.
 - **laravel-support** — Eloquent concerns (`HasExpiration`, `HasSlugs`, `HasChildren/HasParent`, `InMemory`, `CanIncludeRelationships`), custom validation rules (`ExistsEloquent`, `UniqueEloquent`), password reset utilities.
 - **laravel-essentials** — Middleware (`UseRequestId`, `UseHeaderGuards`), database commands (`db:make`, `db:drop`), `Overseer` request inspection, `DogmaManager`, `EssentialsConfig`.
 
@@ -49,7 +49,7 @@ app/
 │   ├── Concerns/              # Model traits (CanIncludeRelationships)
 │   └── Scopes/                # Global/local scopes
 ├── Providers/
-│   └── AppServiceProvider.php # Routes, morph map, auth config, event listeners
+│   └── AppServiceProvider.php # Routes, morph map, Shield config, event listeners
 ├── Resources/
 │   ├── Json/                  # Standard JsonResource classes
 │   └── JsonApi/               # JSON:API-style resources
@@ -70,16 +70,20 @@ $router->prefix('api')
 
 ### Authentication
 
-Configured in `AppServiceProvider::register()`:
+Configured in `AppServiceProvider::register()` via the `Shield` singleton (central entry point for the laravel-auth package):
 
 ```php
-AuthServiceProvider::configure(new AuthConfig(
+Shield::configure($this->app, new Shield(
     tokenModel: Token::class,
     userModel: User::class,
     guards: ['session'],
     statefulDomains: ['localhost', '...', 'play.ddev.site'],
+    prefix: 'dpl_',
+    validateUser: fn (User $user): bool => $user->verified_at !== null,
 ));
 ```
+
+`Shield` holds all configuration, the `boot()` method (guard + middleware + cookies + CSRF route registration), token-prefix methods (`decorateToken`, `extractRandom`), and three extension callbacks (`extractToken`, `validateToken`, `validateUser` — all non-nullable with sensible defaults). `AuthServiceProvider` is a thin delegate that calls `Shield::boot()` and loads migrations.
 
 **DynamicGuard flow:** Tries each configured guard (session) first. If none authenticate, falls back to bearer token via `AuthenticateToken`. Tokens are plain random strings (48 chars for bearer, 60 chars for remember). Stored as SHA256 hash, looked up via `WHERE token = hash(secret)`. Checks `expires_at`, updates `last_used_at` with debounce, dispatches `TokenAuthenticated` event.
 
