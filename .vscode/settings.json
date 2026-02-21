@@ -1,41 +1,44 @@
 {
-  "window.title": "play",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[php]": {
-    "editor.defaultFormatter": "laravel.vscode-laravel"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-  },
-  "eslint.enable": true,
-  "eslint.format.enable": true,
-  "eslint.validate": [
-    "javascript",
-    "typescript",
-    "vue"
-  ],
-  "files.associations": {
-    "*.css": "tailwindcss"
-  },
-  "intelephense.environment.documentRoot": "public",
-  "intelephense.environment.phpVersion": "8.4",
-  "search.exclude": {
-    "composer.lock": true,
-    "pnpm-lock.yaml": true,
-    "public/vendor": true
-  },
-  "vue.inlayHints.destructuredProps": true,
-  "vue.inlayHints.inlineHandlerLeading": true,
-  "vue.inlayHints.missingProps": true,
-  "vue.inlayHints.optionsWrapper": true,
-  "vue.inlayHints.vBindShorthand": true
+    "window.title": "play",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[php]": {
+        "editor.defaultFormatter": "laravel.vscode-laravel"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+    },
+    "eslint.enable": true,
+    "eslint.format.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "vue"
+    ],
+    "files.associations": {
+        "*.css": "tailwindcss"
+    },
+    "intelephense.environment.documentRoot": "public",
+    "intelephense.environment.phpVersion": "8.4",
+    "search.exclude": {
+        "composer.lock": true,
+        "pnpm-lock.yaml": true,
+        "public/vendor": true
+    },
+    "vue.inlayHints.destructuredProps": true,
+    "vue.inlayHints.inlineHandlerLeading": true,
+    "vue.inlayHints.missingProps": true,
+    "vue.inlayHints.optionsWrapper": true,
+    "vue.inlayHints.vBindShorthand": true
 }
