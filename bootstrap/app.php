@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use JonaGoldman\Auth\Middlewares\StatefulFrontend;
 use JonaGoldman\Essentials\Middlewares\UseHeaderGuards;
 use JonaGoldman\Essentials\Middlewares\UseRequestId;
 
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->appendToGroup('api', [
+            StatefulFrontend::class,
             UseRequestId::class,
             UseHeaderGuards::class,
         ]);
