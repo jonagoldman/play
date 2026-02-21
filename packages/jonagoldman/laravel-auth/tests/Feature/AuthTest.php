@@ -13,7 +13,6 @@ use JonaGoldman\Auth\Actions\Login;
 use JonaGoldman\Auth\Actions\Logout;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
-use JonaGoldman\Auth\TransientToken;
 
 test('login authenticates with correct credentials', function (): void {
     $user = User::factory()->create(['password' => 'password123']);
@@ -156,7 +155,7 @@ test('logout revokes the bearer token', function (): void {
 
 test('logout invalidates session for session-authenticated users', function (): void {
     $user = User::factory()->create();
-    $user->setRelation('token', new TransientToken);
+    $user->setRelation('token', null);
 
     $this->actingAs($user, 'dynamic');
 
