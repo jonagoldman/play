@@ -11,7 +11,6 @@ use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
-use JonaGoldman\Auth\TransientToken;
 
 final class DynamicGuard
 {
@@ -33,7 +32,7 @@ final class DynamicGuard
         foreach ($this->config->guards as $guard) {
             if ($user = $this->auth->guard($guard)->user()) {
                 /** @var \Illuminate\Database\Eloquent\Model&User $user */
-                $user->setRelation('token', new TransientToken);
+                $user->setRelation('token', null);
 
                 $this->dispatcher->dispatch(new Login('dynamic', $user, false));
 

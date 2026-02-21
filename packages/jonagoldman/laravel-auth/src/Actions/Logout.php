@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace JonaGoldman\Auth\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use JonaGoldman\Auth\TransientToken;
 
 final class Logout
 {
@@ -14,14 +14,13 @@ final class Logout
      */
     public function __invoke(Request $request): void
     {
-        /** @var \Illuminate\Database\Eloquent\Model $user */
+        /** @var Model $user */
         $user = $request->user();
 
         $token = $user->getRelation('token');
 
-        if ($user->relationLoaded('token') && ! $token instanceof TransientToken) {
-            /** @var \Illuminate\Database\Eloquent\Model|null $token */
-            $token?->delete();
+        if ($token instanceof Model) {
+            $token->delete();
         } else {
             $request->session()->invalidate();
             $request->session()->regenerateToken();
