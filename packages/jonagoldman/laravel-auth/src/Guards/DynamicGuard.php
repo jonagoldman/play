@@ -40,7 +40,9 @@ final class DynamicGuard
             }
         }
 
-        if ($token = $request->bearerToken()) {
+        $token = ($this->config->extractToken)($request);
+
+        if ($token) {
             $user = ($this->authenticateToken)($token);
 
             if ($user) {
