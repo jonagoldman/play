@@ -23,6 +23,7 @@ final class AuthConfig
      * @param  list<string>  $statefulDomains
      * @param  ?int  $defaultTokenExpiration  Default token expiration in seconds (null = no default, 0 = no expiration)
      * @param  ?Closure(Authenticatable): bool  $validateUser
+     * @param  array<string, class-string|null>  $middlewares
      */
     public function __construct(
         public readonly string $tokenModel,
@@ -36,6 +37,11 @@ final class AuthConfig
         public readonly ?Closure $validateUser = null,
         public readonly string $tokenPrefix = '',
         public readonly string $csrfCookiePath = '/auth/csrf-cookie',
+        public readonly array $middlewares = [
+            'encrypt_cookies' => \Illuminate\Cookie\Middleware\EncryptCookies::class,
+            'validate_csrf_token' => \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            'authenticate_session' => Middlewares\AuthenticateSession::class,
+        ],
     ) {
         if (! is_subclass_of($tokenModel, IsAuthToken::class)) {
             throw new InvalidArgumentException("Token model [{$tokenModel}] must implement the IsAuthToken contract.");
