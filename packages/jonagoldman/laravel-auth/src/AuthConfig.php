@@ -43,6 +43,10 @@ final class AuthConfig
             'authenticate_session' => Middlewares\AuthenticateSession::class,
         ],
     ) {
+        if (! class_exists($tokenModel)) {
+            throw new InvalidArgumentException("Token model [{$tokenModel}] does not exist.");
+        }
+
         if (! is_subclass_of($tokenModel, IsAuthToken::class)) {
             throw new InvalidArgumentException("Token model [{$tokenModel}] must implement the IsAuthToken contract.");
         }
