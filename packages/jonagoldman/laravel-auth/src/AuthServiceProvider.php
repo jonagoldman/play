@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace JonaGoldman\Auth;
 
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,22 +18,18 @@ use Override;
 final class AuthServiceProvider extends ServiceProvider
 {
     /**
-     * @var \Illuminate\Contracts\Foundation\Application|\Illuminate\Foundation\Application
+     * @var Application|\Illuminate\Foundation\Application
      */
     protected $app;
 
-    private static ?AuthConfig $pendingConfig = null;
-
-    public static function configure(AuthConfig $config): void
+    public static function configure(Application $app, AuthConfig $config): void
     {
-        self::$pendingConfig = $config;
+        $app->singleton(AuthConfig::class, fn (): AuthConfig => $config);
     }
 
     #[Override]
     public function register(): void
     {
-        $this->app->singleton(AuthConfig::class, fn (): AuthConfig => self::$pendingConfig);
-
         config([
             'auth.guards.dynamic' => array_merge([
                 'driver' => 'dynamic',

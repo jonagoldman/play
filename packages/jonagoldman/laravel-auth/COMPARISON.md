@@ -16,9 +16,9 @@ Both packages share these same opinionated decisions, so the **delta is smaller*
 
 ## Improvements in laravel-auth
 
-### 1. IsAuthToken trait vs concrete PersonalAccessToken
+### 1. IsAuthToken contract + trait vs concrete PersonalAccessToken
 **Clear improvement.** Sanctum provides a concrete model and needs `Sanctum::usePersonalAccessTokenModel()` as an escape hatch.
-laravel-auth lets the consuming app define its own model and mix in behavior -- more composable, no workaround needed.
+laravel-auth defines a `Contracts\IsAuthToken` interface and a `Concerns\IsAuthToken` trait — the consuming app owns its model and mixes in behavior. More composable, no workaround needed.
 
 ### 2. Auto-hashing token attribute mutator
 **Clear improvement.** Sanctum hashes in `createToken()` -- the hashing is a caller responsibility.
@@ -45,10 +45,10 @@ Replaces scattered `config()` calls and Sanctum's static properties.
 **Improvement.** Adds a semantic dimension Sanctum lacks. Type-specific generation logic and centralized `generate()` method are clean.
 Enables different token behaviors per type.
 
-### 8. TransientToken marker class
-**Improvement.** Provides a unified `$user->token` interface for both session and bearer auth.
-Interesting that the Sanctum fork _removed_ the original TransientToken from upstream, while laravel-auth independently re-created the concept.
-Sanctum TransientToken was used differently (for `currentAccessToken()`), but the underlying idea (marking session-authenticated users) is the same.
+### 8. Null token for session-authenticated users
+**Improvement.** Session-authenticated users get `$user->token = null`, bearer-authenticated users get the actual token model instance.
+This provides a unified `$user->token` interface without a marker class — `null` vs token instance is the discriminator.
+Simpler than Sanctum's `TransientToken` wrapper and avoids an extra class.
 
 ### 9. ULIDs over auto-incrementing IDs
 **Improvement.** Non-sequential, no information leakage about total count or creation order.
@@ -72,6 +72,14 @@ no information leakage from the ID prefix, simpler token format, and equivalent 
 **Clear improvement.** Deleting expired tokens during auth attempts complements the MassPrunable scheduled pruning.
 Expired tokens are by definition invalid -- deleting them immediately reduces table size and speeds up future lookups.
 The `pruneDays` config handles bulk cleanup of tokens that never get hit again.
+
+### 14. Container-bound config (no static state)
+**Clear improvement.** `configure()` accepts the `Application` instance and binds `AuthConfig` as a singleton directly into the container.
+No static mutable state, no `$pendingConfig` bridging — standard Laravel DI from the start.
+
+### 15. Configurable middleware stack
+**Clear improvement.** `AuthConfig::$middlewares` accepts overrides for `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session`.
+Set a key to `null` to remove it. Sanctum's fork hardcodes the middleware list with no override mechanism.
 
 ---
 
@@ -100,39 +108,31 @@ laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model.
 
 **The deliberate trade-off:** A direct foreign key (`user_id`) provides referential integrity enforced at the database level and simpler queries (no `WHERE tokenable_type = ...` filtering). For single-user-model applications — which are the majority — this is a genuine simplification, not a regression. The cost only surfaces when a second tokenable model is introduced.
 
-### 3. No publishable config or migration
-Minor. The static `configure()` + `$pendingConfig` pattern is effectively global mutable state.
-A Laravel config file allows `env()` for deployment flexibility and is the conventional approach.
-
-### 4. Hardcoded middleware stack
-Minor. Sanctum allows swapping `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session` middleware via config.
-laravel-auth hardcodes them.
-
 ---
 
 ## Summary
 
-| Item                              | Category                |
-|-----------------------------------|-------------------------|
-| IsAuthToken trait                 | Clear improvement       |
-| Auto-hash mutator                 | Clear improvement       |
-| Debounced writes                  | Clear improvement       |
-| MassPrunable                      | Clear improvement       |
-| Action class                      | Clear improvement       |
-| AuthConfig DTO                    | Clear improvement       |
-| TokenType enum                    | Clear improvement       |
-| TransientToken                    | Clear improvement       |
-| ULIDs                             | Clear improvement       |
-| Hash-based lookup                 | Clear improvement       |
-| Proactive expired token cleanup   | Clear improvement       |
-| Naming                            | Minor improvement       |
-| Login event integration           | Minor improvement       |
-| No extension callbacks            | Significant regression  |
-| No MorphMany                      | Significant regression  |
-| No publishable config             | Minor regression        |
-| Hardcoded middleware              | Minor regression        |
+| Item                              | Category               |
+|-----------------------------------|------------------------|
+| IsAuthToken contract + trait      | Clear improvement      |
+| Auto-hash mutator                 | Clear improvement      |
+| Debounced writes                  | Clear improvement      |
+| MassPrunable                      | Clear improvement      |
+| Action class                      | Clear improvement      |
+| AuthConfig DTO                    | Clear improvement      |
+| TokenType enum                    | Clear improvement      |
+| Null token (no TransientToken)    | Clear improvement      |
+| ULIDs                             | Clear improvement      |
+| Hash-based lookup                 | Clear improvement      |
+| Proactive expired token cleanup   | Clear improvement      |
+| Container-bound config            | Clear improvement      |
+| Configurable middleware stack     | Clear improvement      |
+| Naming                            | Minor improvement      |
+| Login event integration           | Minor improvement      |
+| No extension callbacks            | Significant regression |
+| No MorphMany                      | Significant regression |
 
 **Bottom line:** The architectural foundation of laravel-auth is genuinely stronger.
-DI over statics, traits over concrete models, action classes, ULIDs, debounced writes, auto-hashing, built-in pruning.
+DI over statics, contracts over concrete models, action classes, ULIDs, debounced writes, auto-hashing, built-in pruning.
 These are real improvements. No critical regressions remain.
-The remaining regressions are extension points, polymorphic tokens, and other non-critical features.
+The remaining regressions are extension points and polymorphic tokens.
