@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
 use JonaGoldman\Auth\AuthConfig;
@@ -23,6 +24,7 @@ test('token authentication fails when user model does not match configured provi
             userModel: AlternateUser::class,
         ),
         dispatcher: Event::getFacadeRoot(),
+        request: Request::create('/'),
     );
 
     $result = $action($token->plain);
@@ -49,6 +51,7 @@ test('token authentication succeeds when user model matches configured provider'
             userModel: User::class,
         ),
         dispatcher: Event::getFacadeRoot(),
+        request: Request::create('/'),
     );
 
     $result = $action($token->plain);

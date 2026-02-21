@@ -6,6 +6,7 @@ namespace JonaGoldman\Auth;
 
 use Closure;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Http\Request;
 use InvalidArgumentException;
 use JonaGoldman\Auth\Contracts\HasTokens;
 use JonaGoldman\Auth\Contracts\IsAuthToken;
@@ -16,6 +17,12 @@ use function mb_substr;
 
 final class AuthConfig
 {
+    /** @var Closure(Request): ?string */
+    public readonly Closure $extractToken;
+
+    /** @var Closure(IsAuthToken, Request): bool */
+    public readonly Closure $validateToken;
+
     /**
      * @param  class-string<\Illuminate\Database\Eloquent\Model>  $tokenModel
      * @param  class-string<Authenticatable>  $userModel
@@ -23,6 +30,8 @@ final class AuthConfig
      * @param  list<string>  $statefulDomains
      * @param  ?int  $defaultTokenExpiration  Default token expiration in seconds (null = no default, 0 = no expiration)
      * @param  ?Closure(Authenticatable): bool  $validateUser
+     * @param  ?Closure(Request): ?string  $extractToken
+     * @param  ?Closure(IsAuthToken, Request): bool  $validateToken
      * @param  array<string, class-string|null>  $middlewares
      */
     public function __construct(
@@ -35,6 +44,8 @@ final class AuthConfig
         public readonly int $lastUsedAtDebounce = 300,
         public readonly ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
         public readonly ?Closure $validateUser = null,
+        ?Closure $extractToken = null,
+        ?Closure $validateToken = null,
         public readonly string $tokenPrefix = '',
         public readonly string $csrfCookiePath = '/auth/csrf-cookie',
         public readonly array $middlewares = [
@@ -43,6 +54,9 @@ final class AuthConfig
             'authenticate_session' => Middlewares\AuthenticateSession::class,
         ],
     ) {
+        $this->extractToken = $extractToken ?? static fn (Request $request): ?string => $request->bearerToken();
+        $this->validateToken = $validateToken ?? static fn (IsAuthToken $token, Request $request): bool => true;
+
         if (! class_exists($tokenModel)) {
             throw new InvalidArgumentException("Token model [{$tokenModel}] does not exist.");
         }

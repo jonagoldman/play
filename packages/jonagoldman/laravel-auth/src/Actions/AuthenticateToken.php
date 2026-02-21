@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
+use Illuminate\Http\Request;
 use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Events\TokenAuthenticated;
 
@@ -16,6 +17,7 @@ final class AuthenticateToken
     public function __construct(
         private AuthConfig $config,
         private DispatcherContract $dispatcher,
+        private Request $request,
     ) {}
 
     public function __invoke(string $token): ?Authenticatable
@@ -52,6 +54,12 @@ final class AuthenticateToken
         $user = $accessToken->user;
 
         if (! $user instanceof $this->config->userModel) {
+            return null;
+        }
+
+        if (! ($this->config->validateToken)($accessToken, $this->request)) {
+            $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
+
             return null;
         }
 

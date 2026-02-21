@@ -97,21 +97,21 @@ No static mutable state, no `$pendingConfig` bridging — standard Laravel DI fr
 **Clear improvement.** `AuthConfig::$middlewares` accepts overrides for `encrypt_cookies`, `validate_csrf_token`, and `authenticate_session`.
 Set a key to `null` to remove it. Sanctum's fork hardcodes the middleware list with no override mechanism.
 
+### 16. Extension callbacks via AuthConfig closures
+
+**Clear improvement.** Three extension points matching Sanctum's capabilities, implemented as typed closures on the `AuthConfig` DTO:
+
+- `$extractToken` — custom token extraction (e.g., from query param, custom header). Non-nullable with a default that returns `bearerToken()`. Override to fully own extraction — compose the fallback yourself if needed.
+- `$validateToken` — custom token validation (e.g., IP allowlisting). Non-nullable with a default that returns `true` (no-op). Receives the token model and request, runs after standard checks but before `$validateUser`.
+- `ActingAsToken` trait — testing convenience that creates a real token and sets the `Authorization` header.
+
+Cleaner than Sanctum's static method approach: closures are type-safe, non-nullable with sensible defaults, and scoped to the config instance.
+
 ---
 
 ## Regressions in laravel-auth
 
-### 1. No extension callbacks
-
-Sanctum provides three extension points:
-
-- `getAccessTokenFromRequestUsing()` -- custom token extraction (e.g., from query param or custom header)
-- `authenticateAccessTokensUsing()` -- custom validation (e.g., IP allowlisting)
-- `actingAs()` -- testing convenience
-
-All three are absent. The first two matter for real-world customization. `actingAs()` is a significant testing convenience.
-
-### 2. HasMany instead of MorphMany (polymorphic)
+### 1. HasMany instead of MorphMany (polymorphic)
 
 Sanctum's polymorphic `tokenable` relationship lets any model type (User, Admin, Device) have tokens with one table.
 laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model.
@@ -147,12 +147,12 @@ laravel-auth's `BelongsTo`/`HasMany` ties tokens to a single user model.
 | Proactive expired token cleanup | Clear improvement      |
 | Container-bound config          | Clear improvement      |
 | Configurable middleware stack   | Clear improvement      |
+| Extension callbacks             | Clear improvement      |
 | Naming                          | Minor improvement      |
 | Login event integration         | Minor improvement      |
-| No extension callbacks          | Significant regression |
 | No MorphMany                    | Significant regression |
 
 **Bottom line:** The architectural foundation of laravel-auth is genuinely stronger.
 DI over statics, contracts over concrete models, action classes, ULIDs, debounced writes, auto-hashing, built-in pruning.
 These are real improvements. No critical regressions remain.
-The remaining regressions are extension points and polymorphic tokens.
+The only remaining regression is polymorphic tokens.
