@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Auth\Tests\Fixtures\AlternateUser;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
@@ -19,7 +19,7 @@ test('token authentication fails when user model does not match configured provi
     $token = Token::factory()->for($user)->create();
 
     $action = new AuthenticateToken(
-        config: new AuthConfig(
+        shield: new Shield(
             tokenModel: Token::class,
             userModel: AlternateUser::class,
         ),
@@ -35,7 +35,7 @@ test('token authentication fails when user model does not match configured provi
 });
 
 test('auth config rejects token model not implementing the contract', function (): void {
-    expect(fn () => new AuthConfig(
+    expect(fn () => new Shield(
         tokenModel: Model::class,
         userModel: User::class,
     ))->toThrow(InvalidArgumentException::class, 'must implement the IsAuthToken contract');
@@ -46,7 +46,7 @@ test('token authentication succeeds when user model matches configured provider'
     $token = Token::factory()->for($user)->create();
 
     $action = new AuthenticateToken(
-        config: new AuthConfig(
+        shield: new Shield(
             tokenModel: Token::class,
             userModel: User::class,
         ),

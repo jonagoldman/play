@@ -9,13 +9,13 @@ use Illuminate\Auth\Events\Failed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Events\TokenAuthenticated;
+use JonaGoldman\Auth\Shield;
 
 final class AuthenticateToken
 {
     public function __construct(
-        private AuthConfig $config,
+        private Shield $shield,
         private DispatcherContract $dispatcher,
         private Request $request,
     ) {}
@@ -36,7 +36,7 @@ final class AuthenticateToken
     private function resolve(string $token): ?Authenticatable
     {
         /** @var class-string<\Illuminate\Database\Eloquent\Model&\JonaGoldman\Auth\Contracts\IsAuthToken> $tokenModel */
-        $tokenModel = $this->config->tokenModel;
+        $tokenModel = $this->shield->tokenModel;
 
         $accessToken = $tokenModel::findByToken($token);
 
@@ -53,17 +53,17 @@ final class AuthenticateToken
         /** @var Authenticatable|null $user */
         $user = $accessToken->user;
 
-        if (! $user instanceof $this->config->userModel) {
+        if (! $user instanceof $this->shield->userModel) {
             return null;
         }
 
-        if (! ($this->config->validateToken)($accessToken, $this->request)) {
+        if (! ($this->shield->validateToken)($accessToken, $this->request)) {
             $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
 
             return null;
         }
 
-        if ($this->config->validateUser && ! ($this->config->validateUser)($user)) {
+        if (! ($this->shield->validateUser)($user)) {
             $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
 
             return null;

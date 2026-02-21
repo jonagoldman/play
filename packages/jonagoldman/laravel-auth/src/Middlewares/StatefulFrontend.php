@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class StatefulFrontend
 {
     public function __construct(
-        private AuthConfig $config,
+        private Shield $shield,
     ) {}
 
     /**
@@ -37,7 +37,7 @@ final class StatefulFrontend
         $domain = Str::replaceFirst('http://', '', $domain);
         $domain = Str::endsWith($domain, '/') ? $domain : "{$domain}/";
 
-        $stateful = array_filter($this->config->statefulDomains);
+        $stateful = array_filter($this->shield->statefulDomains);
 
         return Str::is(Collection::make($stateful)->map(function ($uri) {
             return mb_trim($uri).'/*';
@@ -64,11 +64,11 @@ final class StatefulFrontend
     private function frontendMiddleware(): array
     {
         return array_values(array_filter(array_unique([
-            'encrypt_cookies' => $this->config->middlewares['encrypt_cookies'],
+            'encrypt_cookies' => $this->shield->middlewares['encrypt_cookies'],
             'response_cookies' => \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             'start_session' => \Illuminate\Session\Middleware\StartSession::class,
-            'validate_csrf_token' => $this->config->middlewares['validate_csrf_token'],
-            'authenticate_session' => $this->config->middlewares['authenticate_session'],
+            'validate_csrf_token' => $this->shield->middlewares['validate_csrf_token'],
+            'authenticate_session' => $this->shield->middlewares['authenticate_session'],
         ])));
     }
 }

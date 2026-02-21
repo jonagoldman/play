@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Middlewares\AuthenticateSession;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
 
 test('auth config includes default middleware', function (): void {
-    $config = new AuthConfig(
+    $shield = new Shield(
         tokenModel: Token::class,
         userModel: User::class,
     );
 
-    expect($config->middlewares)->toBe([
+    expect($shield->middlewares)->toBe([
         'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
         'authenticate_session' => AuthenticateSession::class,
@@ -21,7 +21,7 @@ test('auth config includes default middleware', function (): void {
 });
 
 test('auth config allows overriding a single middleware', function (): void {
-    $config = new AuthConfig(
+    $shield = new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         middlewares: [
@@ -31,13 +31,13 @@ test('auth config allows overriding a single middleware', function (): void {
         ],
     );
 
-    expect($config->middlewares['encrypt_cookies'])->toBe('App\Http\Middleware\CustomEncryptCookies')
-        ->and($config->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
-        ->and($config->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
+    expect($shield->middlewares['encrypt_cookies'])->toBe('App\Http\Middleware\CustomEncryptCookies')
+        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->and($shield->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
 });
 
 test('auth config allows removing middleware via null', function (): void {
-    $config = new AuthConfig(
+    $shield = new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         middlewares: [
@@ -47,13 +47,13 @@ test('auth config allows removing middleware via null', function (): void {
         ],
     );
 
-    expect($config->middlewares['encrypt_cookies'])->toBeNull()
-        ->and($config->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
-        ->and($config->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
+    expect($shield->middlewares['encrypt_cookies'])->toBeNull()
+        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->and($shield->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
 });
 
 test('auth config allows overriding multiple middleware at once', function (): void {
-    $config = new AuthConfig(
+    $shield = new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         middlewares: [
@@ -63,7 +63,7 @@ test('auth config allows overriding multiple middleware at once', function (): v
         ],
     );
 
-    expect($config->middlewares['encrypt_cookies'])->toBeNull()
-        ->and($config->middlewares['validate_csrf_token'])->toBe('App\Http\Middleware\CustomCsrf')
-        ->and($config->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
+    expect($shield->middlewares['encrypt_cookies'])->toBeNull()
+        ->and($shield->middlewares['validate_csrf_token'])->toBe('App\Http\Middleware\CustomCsrf')
+        ->and($shield->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
 });

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
 use JonaGoldman\Auth\Actions\AuthenticateToken;
-use JonaGoldman\Auth\AuthConfig;
+use JonaGoldman\Auth\Shield;
 
 final class DynamicGuard
 {
@@ -19,7 +19,7 @@ final class DynamicGuard
      */
     public function __construct(
         private Auth $auth,
-        private AuthConfig $config,
+        private Shield $shield,
         private AuthenticateToken $authenticateToken,
         private DispatcherContract $dispatcher,
     ) {}
@@ -29,7 +29,7 @@ final class DynamicGuard
      */
     public function __invoke(Request $request): ?User
     {
-        foreach ($this->config->guards as $guard) {
+        foreach ($this->shield->guards as $guard) {
             if ($user = $this->auth->guard($guard)->user()) {
                 /** @var \Illuminate\Database\Eloquent\Model&User $user */
                 $user->setRelation('token', null);
@@ -40,7 +40,7 @@ final class DynamicGuard
             }
         }
 
-        $token = ($this->config->extractToken)($request);
+        $token = ($this->shield->extractToken)($request);
 
         if ($token) {
             $user = ($this->authenticateToken)($token);

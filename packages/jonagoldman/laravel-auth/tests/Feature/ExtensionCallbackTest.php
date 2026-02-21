@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Support\Facades\Event;
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Concerns\ActingAsToken;
 use JonaGoldman\Auth\Contracts\IsAuthToken;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
 
 uses(ActingAsToken::class);
 
 test('extractToken extracts token from custom header', function (): void {
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         extractToken: fn ($request) => $request->header('X-API-Token'),
@@ -29,7 +29,7 @@ test('extractToken extracts token from custom header', function (): void {
 });
 
 test('extractToken returning null skips token authentication', function (): void {
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         extractToken: fn ($request) => null,
@@ -44,7 +44,7 @@ test('extractToken returning null skips token authentication', function (): void
 });
 
 test('extractToken extracts token from query param', function (): void {
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         extractToken: fn ($request) => $request->query('api_token'),
@@ -61,7 +61,7 @@ test('extractToken extracts token from query param', function (): void {
 test('validateToken rejects when returning false', function (): void {
     Event::fake([Failed::class]);
 
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         validateToken: fn (IsAuthToken $token, $request) => false,
@@ -78,7 +78,7 @@ test('validateToken rejects when returning false', function (): void {
 });
 
 test('validateToken allows when returning true', function (): void {
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         validateToken: fn (IsAuthToken $token, $request) => true,
@@ -98,7 +98,7 @@ test('validateToken receives the correct token model and request', function (): 
     $captured->token = null;
     $captured->request = null;
 
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         validateToken: function (IsAuthToken $token, $request) use ($captured): bool {

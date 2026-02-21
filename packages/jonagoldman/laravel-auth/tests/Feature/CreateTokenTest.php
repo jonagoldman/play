@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Date;
-use JonaGoldman\Auth\AuthConfig;
 use JonaGoldman\Auth\Enums\TokenType;
+use JonaGoldman\Auth\Shield;
 use JonaGoldman\Auth\Tests\Fixtures\Token;
 use JonaGoldman\Auth\Tests\Fixtures\User;
 
@@ -52,7 +52,7 @@ test('createToken stores hashed token in database', function (): void {
 
     $token = $user->createToken();
 
-    $random = app(AuthConfig::class)->extractRandom($token->plain);
+    $random = app(Shield::class)->extractRandom($token->plain);
 
     $this->assertDatabaseHas('tokens', [
         'id' => $token->getKey(),
@@ -63,7 +63,7 @@ test('createToken stores hashed token in database', function (): void {
 test('createToken with no default expiration creates token without expiry', function (): void {
     $user = User::factory()->create();
 
-    $this->app->singleton(AuthConfig::class, fn () => new AuthConfig(
+    $this->app->singleton(Shield::class, fn () => new Shield(
         tokenModel: Token::class,
         userModel: User::class,
         defaultTokenExpiration: null,
