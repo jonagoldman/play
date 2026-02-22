@@ -15,7 +15,7 @@ test('token authentication dispatches Attempting and TokenAuthenticated events',
     Event::fake([Attempting::class, TokenAuthenticated::class, Login::class]);
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')
@@ -41,7 +41,7 @@ test('expired token dispatches Failed event', function (): void {
     Event::fake([Attempting::class, Failed::class]);
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create([
+    $token = Token::factory()->for($user, 'owner')->create([
         'expires_at' => Date::now()->subDay(),
     ]);
 
@@ -56,7 +56,7 @@ test('token authentication dispatches Login event', function (): void {
     Event::fake([Login::class, Attempting::class, TokenAuthenticated::class]);
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')

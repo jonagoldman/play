@@ -16,7 +16,7 @@ test('token authentication fails when user model does not match configured provi
     Event::fake([Failed::class]);
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $action = new AuthenticateToken(
         shield: new Shield(
@@ -43,7 +43,7 @@ test('auth config rejects token model not implementing the contract', function (
 
 test('token authentication succeeds when user model matches configured provider', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $action = new AuthenticateToken(
         shield: new Shield(

@@ -12,8 +12,8 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use InvalidArgumentException;
-use JonaGoldman\Auth\Contracts\HasTokens;
 use JonaGoldman\Auth\Contracts\IsAuthToken;
+use JonaGoldman\Auth\Contracts\OwnsTokens;
 use JonaGoldman\Auth\Controllers\CsrfCookieController;
 use JonaGoldman\Auth\Guards\DynamicGuard;
 use JonaGoldman\Auth\Middlewares\StatefulFrontend;
@@ -174,8 +174,8 @@ final class Shield
             throw new InvalidArgumentException("User model [{$this->userModel}] does not exist.");
         }
 
-        if (! is_subclass_of($this->userModel, HasTokens::class)) {
-            throw new InvalidArgumentException("User model [{$this->userModel}] must implement the HasTokens contract.");
+        if (! is_subclass_of($this->userModel, OwnsTokens::class)) {
+            throw new InvalidArgumentException("User model [{$this->userModel}] must implement the OwnsTokens contract.");
         }
     }
 }

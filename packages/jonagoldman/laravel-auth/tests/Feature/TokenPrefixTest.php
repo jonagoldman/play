@@ -96,7 +96,7 @@ test('empty prefix preserves original behavior', function (): void {
 
 test('authentication works with prefixed token', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     expect($token->plain)->toStartWith('dpl_');
 
@@ -107,7 +107,7 @@ test('authentication works with prefixed token', function (): void {
 
 test('authentication rejects tampered prefixed token', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $tampered = mb_substr($token->plain, 0, -1).'X';
 

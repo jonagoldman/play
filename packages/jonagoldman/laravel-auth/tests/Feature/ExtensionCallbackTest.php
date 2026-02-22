@@ -20,7 +20,7 @@ test('extractToken extracts token from custom header', function (): void {
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withHeader('X-API-Token', $token->plain)
         ->getJson('/auth-test')
@@ -36,7 +36,7 @@ test('extractToken returning null skips token authentication', function (): void
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')
@@ -51,7 +51,7 @@ test('extractToken extracts token from query param', function (): void {
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->getJson('/auth-test?api_token='.$token->plain)
         ->assertSuccessful()
@@ -68,7 +68,7 @@ test('validateToken rejects when returning false', function (): void {
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')
@@ -85,7 +85,7 @@ test('validateToken allows when returning true', function (): void {
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')
@@ -110,7 +110,7 @@ test('validateToken receives the correct token model and request', function (): 
     ));
 
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')

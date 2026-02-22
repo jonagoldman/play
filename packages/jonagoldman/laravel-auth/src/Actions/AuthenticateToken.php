@@ -51,7 +51,7 @@ final class AuthenticateToken
         }
 
         /** @var Authenticatable|null $user */
-        $user = $accessToken->user;
+        $user = $accessToken->owner;
 
         if (! $user instanceof $this->shield->userModel) {
             return null;

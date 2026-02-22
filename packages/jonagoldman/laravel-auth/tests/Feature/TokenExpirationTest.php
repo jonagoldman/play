@@ -17,7 +17,7 @@ test('createToken sets a default expiration', function (): void {
 
 test('expired tokens are deleted on authentication attempt', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create([
+    $token = Token::factory()->for($user, 'owner')->create([
         'expires_at' => Date::now()->subDay(),
     ]);
 
@@ -30,7 +30,7 @@ test('expired tokens are deleted on authentication attempt', function (): void {
 
 test('expired tokens return 401', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create([
+    $token = Token::factory()->for($user, 'owner')->create([
         'expires_at' => Date::now()->subMinute(),
     ]);
 
@@ -41,7 +41,7 @@ test('expired tokens return 401', function (): void {
 
 test('non-expired tokens authenticate successfully', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create([
+    $token = Token::factory()->for($user, 'owner')->create([
         'expires_at' => Date::now()->addDay(),
     ]);
 
@@ -52,7 +52,7 @@ test('non-expired tokens authenticate successfully', function (): void {
 
 test('unverified users cannot authenticate via token', function (): void {
     $user = User::factory()->unverified()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')

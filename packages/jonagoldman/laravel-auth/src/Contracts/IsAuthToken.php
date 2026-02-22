@@ -10,7 +10,7 @@ interface IsAuthToken
 {
     public static function findByToken(string $token): ?static;
 
-    public function user(): BelongsTo;
+    public function owner(): BelongsTo;
 
     public function setPlain(string $value): void;
 

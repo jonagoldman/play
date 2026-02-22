@@ -141,7 +141,7 @@ test('stateful login rejects bad credentials', function (): void {
 
 test('logout revokes the bearer token', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')
@@ -177,7 +177,7 @@ test('logout invalidates session for session-authenticated users', function (): 
 
 test('authenticated user is returned via auth guard', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/auth-test')

@@ -9,9 +9,9 @@ use JonaGoldman\Auth\Tests\Fixtures\User;
 beforeEach(function (): void {
     $this->policy = new TokenPolicy;
     $this->user = User::factory()->create();
-    $this->token = Token::factory()->for($this->user)->create();
+    $this->token = Token::factory()->for($this->user, 'owner')->create();
     $this->otherUser = User::factory()->create();
-    $this->otherToken = Token::factory()->for($this->otherUser)->create();
+    $this->otherToken = Token::factory()->for($this->otherUser, 'owner')->create();
 });
 
 test('user can list their own tokens', function (): void {

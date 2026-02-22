@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
-    $this->token = Token::factory()->for($this->user)->create();
+    $this->token = Token::factory()->for($this->user, 'owner')->create();
 
     $this->actingAs($this->user, 'dynamic');
 });

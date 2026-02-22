@@ -35,5 +35,9 @@ final class AuthServiceProvider extends ServiceProvider
         $this->publishesMigrations([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'laravel-auth-migrations');
+
+        $this->publishesMigrations([
+            __DIR__.'/../database/migrations/morph' => database_path('migrations'),
+        ], 'laravel-auth-morph-migrations');
     }
 }

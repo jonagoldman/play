@@ -130,7 +130,7 @@ test('spa register returns user without token', function (): void {
 
 test('logout revokes bearer token', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->postJson('/api/logout')
@@ -141,7 +141,7 @@ test('logout revokes bearer token', function (): void {
 
 test('authenticated user endpoint returns current user', function (): void {
     $user = User::factory()->create();
-    $token = Token::factory()->for($user)->create();
+    $token = Token::factory()->for($user, 'owner')->create();
 
     $this->withToken($token->plain, 'Bearer')
         ->getJson('/api/user')

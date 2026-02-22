@@ -6,13 +6,13 @@ namespace JonaGoldman\Auth\Concerns;
 
 use DateTimeInterface;
 use Illuminate\Contracts\Auth\Authenticatable;
-use JonaGoldman\Auth\Contracts\HasTokens as HasTokensContract;
+use JonaGoldman\Auth\Contracts\OwnsTokens;
 use JonaGoldman\Auth\Enums\TokenType;
 
 trait ActingAsToken
 {
     public function actingAsToken(
-        Authenticatable&HasTokensContract $user,
+        Authenticatable&OwnsTokens $user,
         TokenType $type = TokenType::Bearer,
         ?DateTimeInterface $expiresAt = null,
     ): static {

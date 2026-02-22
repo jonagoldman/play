@@ -79,9 +79,9 @@ trait IsAuthToken
         ]);
     }
 
-    public function user(): BelongsTo
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(app(Shield::class)->userModel);
+        return $this->belongsTo(app(Shield::class)->userModel, 'user_id');
     }
 
     /**
