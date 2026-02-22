@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Resources;
 
+use Deplox\Shield\Resources\TokenResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Context;
-use JonaGoldman\Auth\Resources\TokenResource;
 
 /**
  * @mixin \App\Models\User

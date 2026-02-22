@@ -8,12 +8,12 @@ use App\Models\User;
 use App\Requests\LoginRequest;
 use App\Requests\RegisterRequest;
 use App\Services\UserService;
+use Deplox\Shield\Actions\Login;
+use Deplox\Shield\Actions\Logout;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use JonaGoldman\Auth\Actions\Login;
-use JonaGoldman\Auth\Actions\Logout;
 
 final readonly class AuthController
 {

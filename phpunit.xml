@@ -11,8 +11,8 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
-        <testsuite name="Auth">
-            <directory>packages/jonagoldman/laravel-auth/tests/Feature</directory>
+        <testsuite name="Shield">
+            <directory>packages/deplox/laravel-shield/tests/Feature</directory>
         </testsuite>
     </testsuites>
     <source>

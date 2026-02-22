@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use Deplox\Shield\Shield;
+use Deplox\Shield\Tests\Fixtures\Token;
+use Deplox\Shield\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use JonaGoldman\Auth\Shield;
-use JonaGoldman\Auth\Tests\Fixtures\Token;
-use JonaGoldman\Auth\Tests\Fixtures\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +39,7 @@ pest()->extend(Tests\TestCase::class)
                 'id' => $request->user()->getKey(),
             ]));
     })
-    ->in('../packages/jonagoldman/laravel-auth/tests/Feature');
+    ->in('../packages/deplox/laravel-shield/tests/Feature');
 
 /*
 |--------------------------------------------------------------------------

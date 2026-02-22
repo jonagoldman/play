@@ -12,7 +12,7 @@
     ],
     "require": {
         "php": "^8.4",
-        "jonagoldman/laravel-auth": "dev-master",
+        "deplox/laravel-shield": "dev-master",
         "jonagoldman/laravel-essentials": "dev-master",
         "jonagoldman/laravel-support": "dev-master",
         "laravel/framework": "dev-12.x-opinionated as 12.52.0",
@@ -56,7 +56,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
-            "JonaGoldman\\Auth\\Tests\\": "packages/jonagoldman/laravel-auth/tests/"
+            "Deplox\\Shield\\Tests\\": "packages/deplox/laravel-shield/tests/"
         }
     },
     "scripts": {

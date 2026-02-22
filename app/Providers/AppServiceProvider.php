@@ -7,13 +7,13 @@ namespace App\Providers;
 use App\ApiRouteRegistrar;
 use App\Models\Token;
 use App\Models\User;
+use Deplox\Shield\Shield;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use JonaGoldman\Auth\Shield;
 use Override;
 
 final class AppServiceProvider extends ServiceProvider

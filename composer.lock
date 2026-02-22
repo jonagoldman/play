@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "180d08893c68e2a056a3284329e9be01",
+    "content-hash": "f569466bb0c5c1c350260c51b2e40476",
     "packages": [
         {
             "name": "brick/math",
@@ -134,6 +134,47 @@
                 }
             ],
             "time": "2024-02-09T16:56:22+00:00"
+        },
+        {
+            "name": "deplox/laravel-shield",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/deplox/laravel-shield",
+                "reference": "bc8c9523a8812ebf26e248daecffc56bfefb69cf"
+            },
+            "require": {
+                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Deplox\\Shield\\ShieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Deplox\\Shield\\": "src/",
+                    "Deplox\\Shield\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jona Goldman",
+                    "email": "jonagoldman@gmail.com"
+                }
+            ],
+            "description": "Opinionated auth for Laravel projects.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1051,47 +1092,6 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
-        },
-        {
-            "name": "jonagoldman/laravel-auth",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "packages/jonagoldman/laravel-auth",
-                "reference": "c5200fe80539762a960c97b7d1c90147e98ed164"
-            },
-            "require": {
-                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
-                "php": "^8.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "JonaGoldman\\Auth\\AuthServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "JonaGoldman\\Auth\\": "src/",
-                    "JonaGoldman\\Auth\\Database\\Factories\\": "database/factories/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jona Goldman",
-                    "email": "jonagoldman@gmail.com"
-                }
-            ],
-            "description": "Opinionated auth for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "jonagoldman/laravel-essentials",
@@ -10023,7 +10023,7 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "jonagoldman/laravel-auth": 20,
+        "deplox/laravel-shield": 20,
         "jonagoldman/laravel-essentials": 20,
         "jonagoldman/laravel-support": 20,
         "laravel/framework": 20

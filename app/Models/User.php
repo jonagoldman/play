@@ -6,14 +6,14 @@ namespace App\Models;
 
 use App\Resources\UserResource;
 use Carbon\CarbonInterface;
+use Deplox\Shield\Concerns\HasTokens;
+use Deplox\Shield\Contracts\HasTokens as HasTokensContract;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Casts\AsBinary;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use JonaGoldman\Auth\Concerns\HasTokens;
-use JonaGoldman\Auth\Contracts\HasTokens as HasTokensContract;
 use JonaGoldman\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
 
 /**
