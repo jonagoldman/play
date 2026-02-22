@@ -35,8 +35,8 @@ pnpm build                # Production build
 Three local packages symlinked via Composer path repositories:
 
 - **laravel-shield** (`deplox/laravel-shield`) — Token-based authentication with `Shield` as the central entry point (configuration, boot logic, token-prefix methods). `DynamicGuard` (session-first, bearer fallback), `AuthenticateToken` action, `TokenType` enum (`Bearer`, `Remember`). Provides `auth:dynamic` guard. Key trait: `HasTokens`. Namespace: `Deplox\Shield`.
-- **laravel-support** — Eloquent concerns (`HasExpiration`, `HasSlugs`, `HasChildren/HasParent`, `InMemory`, `CanIncludeRelationships`), custom validation rules (`ExistsEloquent`, `UniqueEloquent`), password reset utilities.
-- **laravel-essentials** — Middleware (`UseRequestId`, `UseHeaderGuards`), database commands (`db:make`, `db:drop`), `Overseer` request inspection, `DogmaManager`, `EssentialsConfig`.
+- **laravel-support** (`deplox/laravel-support`) — Eloquent concerns (`HasExpiration`, `HasSlugs`, `HasChildren/HasParent`, `InMemory`, `CanIncludeRelationships`), custom validation rules (`ExistsEloquent`, `UniqueEloquent`), password reset utilities. Namespace: `Deplox\Support`.
+- **laravel-essentials** (`deplox/laravel-essentials`) — Middleware (`UseRequestId`, `UseHeaderGuards`), database commands (`db:make`, `db:drop`), `Overseer` request inspection, `DogmaManager`, `EssentialsConfig`. Namespace: `Deplox\Essentials`.
 
 ### Application Structure
 

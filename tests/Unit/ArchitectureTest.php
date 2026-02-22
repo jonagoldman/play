@@ -6,7 +6,7 @@ declare(strict_types=1);
  * It avoids the usage of die, var_dump, and similar functions, and ensures you are not using deprecated PHP functions.
  */
 arch()->preset()->php()
-    ->ignoring('JonaGoldman\Support\Database\Eloquent\Concerns\HasChildren');
+    ->ignoring('Deplox\Support\Database\Eloquent\Concerns\HasChildren');
 
 /**
  * It ensures you are not using code that could lead to security vulnerabilities.

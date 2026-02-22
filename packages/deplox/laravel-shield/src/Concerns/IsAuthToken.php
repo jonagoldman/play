@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Deplox\Shield\Concerns;
 
+use Deplox\Shield\Enums\TokenType;
+use Deplox\Shield\Shield;
+use Deplox\Support\Database\Eloquent\Concerns\HasExpiration;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Deplox\Shield\Enums\TokenType;
-use Deplox\Shield\Shield;
-use JonaGoldman\Support\Database\Eloquent\Concerns\HasExpiration;
 
 use function hash;
 

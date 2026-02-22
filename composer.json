@@ -13,8 +13,8 @@
     "require": {
         "php": "^8.4",
         "deplox/laravel-shield": "dev-master",
-        "jonagoldman/laravel-essentials": "dev-master",
-        "jonagoldman/laravel-support": "dev-master",
+        "deplox/laravel-essentials": "dev-master",
+        "deplox/laravel-support": "dev-master",
         "laravel/framework": "dev-12.x-opinionated as 12.52.0",
         "laravel/tinker": "^2.11.0",
         "symfony/filesystem": "^8.0.1"

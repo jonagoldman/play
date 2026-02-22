@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f569466bb0c5c1c350260c51b2e40476",
+    "content-hash": "20d39f21198bc5ef8b5c9aacb04e2a97",
     "packages": [
         {
             "name": "brick/math",
@@ -136,6 +136,46 @@
             "time": "2024-02-09T16:56:22+00:00"
         },
         {
+            "name": "deplox/laravel-essentials",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/deplox/laravel-essentials",
+                "reference": "5cffd766151b357f126c4a2b888556ed50bf03d5"
+            },
+            "require": {
+                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Deplox\\Essentials\\EssentialsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Deplox\\Essentials\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jona Goldman",
+                    "email": "jonagoldman@gmail.com"
+                }
+            ],
+            "description": "Opinionated defaults for Laravel projects.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
             "name": "deplox/laravel-shield",
             "version": "dev-master",
             "dist": {
@@ -171,6 +211,46 @@
                 }
             ],
             "description": "Opinionated auth for Laravel projects.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
+        },
+        {
+            "name": "deplox/laravel-support",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/deplox/laravel-support",
+                "reference": "cc9619aa20b39211314d026339fe7b86691e90ee"
+            },
+            "require": {
+                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
+                "php": "^8.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Deplox\\Support\\SupportServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Deplox\\Support\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jona Goldman",
+                    "email": "jonagoldman@gmail.com"
+                }
+            ],
+            "description": "Opinionated support for Laravel projects.",
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -1092,86 +1172,6 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
-        },
-        {
-            "name": "jonagoldman/laravel-essentials",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "packages/jonagoldman/laravel-essentials",
-                "reference": "231af6d278ae655b8fd493cd134d35d3b89eb4d8"
-            },
-            "require": {
-                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
-                "php": "^8.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "JonaGoldman\\Essentials\\EssentialsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "JonaGoldman\\Essentials\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jona Goldman",
-                    "email": "jonagoldman@gmail.com"
-                }
-            ],
-            "description": "Opinionated defaults for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "jonagoldman/laravel-support",
-            "version": "dev-master",
-            "dist": {
-                "type": "path",
-                "url": "packages/jonagoldman/laravel-support",
-                "reference": "dc83da9b6b81cbd9198c06a93e11c1f7c3bac80f"
-            },
-            "require": {
-                "laravel/framework": "dev-12.x-opinionated as 12.52.0",
-                "php": "^8.4"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "JonaGoldman\\Support\\SupportServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "JonaGoldman\\Support\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jona Goldman",
-                    "email": "jonagoldman@gmail.com"
-                }
-            ],
-            "description": "Opinionated support for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "laravel/framework",
@@ -10023,9 +10023,9 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
+        "deplox/laravel-essentials": 20,
         "deplox/laravel-shield": 20,
-        "jonagoldman/laravel-essentials": 20,
-        "jonagoldman/laravel-support": 20,
+        "deplox/laravel-support": 20,
         "laravel/framework": 20
     },
     "prefer-stable": true,

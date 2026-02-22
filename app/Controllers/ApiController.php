@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use Deplox\Essentials\Facades\Overseer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use JonaGoldman\Essentials\Facades\Overseer;
 
 final class ApiController
 {

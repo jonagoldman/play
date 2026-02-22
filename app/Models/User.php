@@ -8,13 +8,13 @@ use App\Resources\UserResource;
 use Carbon\CarbonInterface;
 use Deplox\Shield\Concerns\HasTokens;
 use Deplox\Shield\Contracts\HasTokens as HasTokensContract;
+use Deplox\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Casts\AsBinary;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use JonaGoldman\Support\Database\Eloquent\Concerns\CanIncludeRelationships;
 
 /**
  * @property-read string $id

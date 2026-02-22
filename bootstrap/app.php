@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use Deplox\Essentials\Middlewares\UseHeaderGuards;
+use Deplox\Essentials\Middlewares\UseRequestId;
 use Deplox\Shield\Middlewares\StatefulFrontend;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use JonaGoldman\Essentials\Middlewares\UseHeaderGuards;
-use JonaGoldman\Essentials\Middlewares\UseRequestId;
 
 // use Illuminate\Support\Facades\Config;
 
