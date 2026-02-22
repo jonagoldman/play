@@ -41,6 +41,27 @@ test('auth config rejects token model not implementing the contract', function (
     ))->toThrow(InvalidArgumentException::class, 'must implement the IsAuthToken contract');
 });
 
+test('shield rejects nonexistent token model', function (): void {
+    expect(fn () => new Shield(
+        tokenModel: 'App\\Models\\NonexistentToken',
+        userModel: User::class,
+    ))->toThrow(InvalidArgumentException::class, 'does not exist');
+});
+
+test('shield rejects nonexistent user model', function (): void {
+    expect(fn () => new Shield(
+        tokenModel: Token::class,
+        userModel: 'App\\Models\\NonexistentUser',
+    ))->toThrow(InvalidArgumentException::class, 'does not exist');
+});
+
+test('shield rejects user model not implementing OwnsTokens', function (): void {
+    expect(fn () => new Shield(
+        tokenModel: Token::class,
+        userModel: Illuminate\Foundation\Auth\User::class,
+    ))->toThrow(InvalidArgumentException::class, 'must implement the OwnsTokens contract');
+});
+
 test('token authentication succeeds when user model matches configured provider', function (): void {
     $user = User::factory()->create();
     $token = Token::factory()->for($user, 'owner')->create();

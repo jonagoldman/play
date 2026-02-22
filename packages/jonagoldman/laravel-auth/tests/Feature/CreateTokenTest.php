@@ -60,6 +60,18 @@ test('createToken stores hashed token in database', function (): void {
     ]);
 });
 
+test('createToken with Remember type produces correct token length', function (): void {
+    $user = User::factory()->create();
+
+    $token = $user->createToken(type: TokenType::Remember);
+
+    // 4 (prefix) + 60 (random) + 8 (crc32b) = 72
+    expect($token->plain)
+        ->toBeString()
+        ->toStartWith('dpl_')
+        ->toHaveLength(72);
+});
+
 test('createToken with no default expiration creates token without expiry', function (): void {
     $user = User::factory()->create();
 
