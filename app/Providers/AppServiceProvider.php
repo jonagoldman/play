@@ -32,7 +32,6 @@ final class AppServiceProvider extends ServiceProvider
             tokenModel: Token::class,
             userModel: User::class,
             guards: ['session'],
-            statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
             prefix: 'dpl_',
             validateUser: fn (User $user): bool => $user->verified_at !== null,
         ));

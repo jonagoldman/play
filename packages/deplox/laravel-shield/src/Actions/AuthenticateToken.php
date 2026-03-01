@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Deplox\Shield\Actions;
 
+use Deplox\Shield\Events\TokenAuthenticated;
+use Deplox\Shield\Shield;
 use Illuminate\Auth\Events\Attempting;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
-use Deplox\Shield\Events\TokenAuthenticated;
-use Deplox\Shield\Shield;
+use Throwable;
 
 final class AuthenticateToken
 {
@@ -57,13 +58,29 @@ final class AuthenticateToken
             return null;
         }
 
-        if (! ($this->shield->validateToken)($accessToken, $this->request)) {
+        try {
+            $validToken = ($this->shield->validateToken)($accessToken, $this->request);
+        } catch (Throwable) {
             $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
 
             return null;
         }
 
-        if (! ($this->shield->validateUser)($user)) {
+        if (! $validToken) {
+            $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
+
+            return null;
+        }
+
+        try {
+            $validUser = ($this->shield->validateUser)($user);
+        } catch (Throwable) {
+            $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
+
+            return null;
+        }
+
+        if (! $validUser) {
             $this->dispatcher->dispatch(new Failed('dynamic', $user, ['token' => $token]));
 
             return null;

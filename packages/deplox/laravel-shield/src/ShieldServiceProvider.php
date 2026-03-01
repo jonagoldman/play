@@ -14,6 +14,8 @@ final class ShieldServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/shield.php', 'shield');
+
         config([
             'auth.guards.dynamic' => array_merge([
                 'driver' => 'dynamic',
@@ -31,6 +33,12 @@ final class ShieldServiceProvider extends ServiceProvider
         $this->app->make(Shield::class)->boot($this->app, $kernel, $auth);
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/shield.php' => config_path('shield.php'),
+            ], 'laravel-shield-config');
+        }
 
         $this->publishesMigrations([
             __DIR__.'/../database/migrations' => database_path('migrations'),

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use Illuminate\Auth\Events\Failed;
-use Illuminate\Support\Facades\Event;
 use Deplox\Shield\Concerns\ActingAsToken;
 use Deplox\Shield\Contracts\IsAuthToken;
 use Deplox\Shield\Shield;
 use Deplox\Shield\Tests\Fixtures\Token;
 use Deplox\Shield\Tests\Fixtures\User;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Support\Facades\Event;
 
 uses(ActingAsToken::class);
 
@@ -120,6 +120,59 @@ test('validateToken receives the correct token model and request', function (): 
         ->and($captured->token->getKey())->toBe($token->getKey())
         ->and($captured->request)->not->toBeNull()
         ->and($captured->request->bearerToken())->toBe($token->plain);
+});
+
+test('extractToken throwing exception returns 401', function (): void {
+    $this->app->singleton(Shield::class, fn () => new Shield(
+        tokenModel: Token::class,
+        userModel: User::class,
+        extractToken: fn ($request) => throw new RuntimeException('Boom'),
+    ));
+
+    $user = User::factory()->create();
+    $token = Token::factory()->for($user, 'owner')->create();
+
+    $this->withToken($token->plain, 'Bearer')
+        ->getJson('/auth-test')
+        ->assertUnauthorized();
+});
+
+test('validateToken throwing exception returns 401 and dispatches Failed event', function (): void {
+    Event::fake([Failed::class]);
+
+    $this->app->singleton(Shield::class, fn () => new Shield(
+        tokenModel: Token::class,
+        userModel: User::class,
+        validateToken: fn (IsAuthToken $token, $request) => throw new RuntimeException('Boom'),
+    ));
+
+    $user = User::factory()->create();
+    $token = Token::factory()->for($user, 'owner')->create();
+
+    $this->withToken($token->plain, 'Bearer')
+        ->getJson('/auth-test')
+        ->assertUnauthorized();
+
+    Event::assertDispatched(Failed::class, fn (Failed $e) => $e->guard === 'dynamic');
+});
+
+test('validateUser throwing exception returns 401 and dispatches Failed event', function (): void {
+    Event::fake([Failed::class]);
+
+    $this->app->singleton(Shield::class, fn () => new Shield(
+        tokenModel: Token::class,
+        userModel: User::class,
+        validateUser: fn ($user) => throw new RuntimeException('Boom'),
+    ));
+
+    $user = User::factory()->create();
+    $token = Token::factory()->for($user, 'owner')->create();
+
+    $this->withToken($token->plain, 'Bearer')
+        ->getJson('/auth-test')
+        ->assertUnauthorized();
+
+    Event::assertDispatched(Failed::class, fn (Failed $e) => $e->guard === 'dynamic');
 });
 
 test('actingAsToken authenticates the user via bearer token', function (): void {

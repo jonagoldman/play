@@ -29,7 +29,6 @@ pest()->extend(Tests\TestCase::class)
         $this->app->singleton(Shield::class, fn () => new Shield(
             tokenModel: Token::class,
             userModel: User::class,
-            statefulDomains: ['localhost', 'localhost:3000', '127.0.0.1', '127.0.0.1:8000', '::1', 'play.ddev.site'],
             prefix: 'dpl_',
             validateUser: fn ($user) => $user->verified_at !== null,
         ));

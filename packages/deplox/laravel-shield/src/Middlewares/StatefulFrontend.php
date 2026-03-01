@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Deplox\Shield\Middlewares;
 
 use Closure;
+use Deplox\Shield\Shield;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Pipeline;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Deplox\Shield\Shield;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -37,10 +37,18 @@ final class StatefulFrontend
         $domain = Str::replaceFirst('http://', '', $domain);
         $domain = Str::endsWith($domain, '/') ? $domain : "{$domain}/";
 
-        $stateful = array_filter($this->shield->statefulDomains);
+        $stateful = array_filter($this->shield->statefulDomains());
+        $withSubdomains = $this->shield->statefulSubdomains();
 
-        return Str::is(Collection::make($stateful)->map(function ($uri) {
-            return mb_trim($uri).'/*';
+        return Str::is(Collection::make($stateful)->flatMap(function ($uri) use ($withSubdomains) {
+            $trimmed = mb_trim($uri);
+            $patterns = [$trimmed.'/*'];
+
+            if ($withSubdomains) {
+                $patterns[] = '*.'.$trimmed.'/*';
+            }
+
+            return $patterns;
         })->all(), $domain);
     }
 

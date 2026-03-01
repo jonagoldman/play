@@ -16,3 +16,4 @@
 | [012](012-token-types.md) | Token Types | Accepted | TokenType enum for semantic token differentiation |
 | [013](013-null-token-session.md) | Null Token for Session Auth | Accepted | Null token relation discriminates session vs bearer auth |
 | [014](014-configurable-middleware.md) | Configurable Middleware | Accepted | Overridable middleware stack with null-to-remove pattern |
+| [015](015-stateful-domains-config.md) | Stateful Domains Config | Accepted | Environment-driven stateful domains via config and env var |

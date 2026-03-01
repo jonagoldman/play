@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 test('stateful request returns 204 with XSRF-TOKEN cookie', function (): void {
     $response = $this->get('/auth/csrf-cookie', [
-        'Origin' => 'https://play.ddev.site',
+        'Origin' => config('app.url'),
     ]);
 
     $response->assertNoContent();

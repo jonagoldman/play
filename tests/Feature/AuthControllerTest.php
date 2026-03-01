@@ -55,10 +55,10 @@ test('api login validates required fields', function (): void {
 test('spa login returns user without token', function (): void {
     $user = User::factory()->create(['password' => 'password123']);
 
-    $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $this->withHeaders(['Origin' => config('app.url')])
         ->get('/auth/csrf-cookie');
 
-    $response = $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $response = $this->withHeaders(['Origin' => config('app.url')])
         ->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'password123',
@@ -74,16 +74,16 @@ test('spa login returns user without token', function (): void {
 test('spa login establishes session for subsequent requests', function (): void {
     $user = User::factory()->create(['password' => 'password123']);
 
-    $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $this->withHeaders(['Origin' => config('app.url')])
         ->get('/auth/csrf-cookie');
 
-    $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $this->withHeaders(['Origin' => config('app.url')])
         ->postJson('/api/login', [
             'email' => $user->email,
             'password' => 'password123',
         ])->assertSuccessful();
 
-    $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $this->withHeaders(['Origin' => config('app.url')])
         ->getJson('/api/user')
         ->assertSuccessful()
         ->assertJsonPath('data.id', $user->id);
@@ -110,10 +110,10 @@ test('api register returns user with token', function (): void {
 test('spa register returns user without token', function (): void {
     Notification::fake();
 
-    $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $this->withHeaders(['Origin' => config('app.url')])
         ->get('/auth/csrf-cookie');
 
-    $response = $this->withHeaders(['Origin' => 'https://play.ddev.site'])
+    $response = $this->withHeaders(['Origin' => config('app.url')])
         ->postJson('/api/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',

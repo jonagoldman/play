@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace Deplox\Shield;
 
 use Closure;
+use Deplox\Shield\Contracts\IsAuthToken;
+use Deplox\Shield\Contracts\OwnsTokens;
+use Deplox\Shield\Controllers\CsrfCookieController;
+use Deplox\Shield\Guards\DynamicGuard;
+use Deplox\Shield\Middlewares\StatefulFrontend;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Foundation\Application;
@@ -12,18 +17,19 @@ use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use InvalidArgumentException;
-use Deplox\Shield\Contracts\IsAuthToken;
-use Deplox\Shield\Contracts\OwnsTokens;
-use Deplox\Shield\Controllers\CsrfCookieController;
-use Deplox\Shield\Guards\DynamicGuard;
-use Deplox\Shield\Middlewares\StatefulFrontend;
 
+use function array_filter;
+use function array_values;
 use function hash;
 use function mb_strlen;
 use function mb_substr;
+use function parse_url;
 
 final class Shield
 {
+    /** @var ?list<string> */
+    public readonly ?array $statefulDomains;
+
     /** @var Closure(Request): ?string */
     public readonly Closure $extractToken;
 
@@ -37,7 +43,7 @@ final class Shield
      * @param  class-string<\Illuminate\Database\Eloquent\Model>  $tokenModel
      * @param  class-string<Authenticatable>  $userModel
      * @param  list<string>  $guards
-     * @param  list<string>  $statefulDomains
+     * @param  ?list<string>  $statefulDomains  Explicit domains override config; null reads from config('shield.stateful')
      * @param  ?int  $defaultTokenExpiration  Default token expiration in seconds (null = no default, 0 = no expiration)
      * @param  array<string, class-string|null>  $middlewares
      * @param  ?Closure(Request): ?string  $extractToken
@@ -50,7 +56,7 @@ final class Shield
         public readonly string $userModel,
         // Guards & domains
         public readonly array $guards = ['session'],
-        public readonly array $statefulDomains = [],
+        ?array $statefulDomains = null,
         // Token lifecycle
         public readonly string $prefix = '',
         public readonly ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
@@ -69,10 +75,12 @@ final class Shield
         ?Closure $validateToken = null,
         ?Closure $validateUser = null,
     ) {
+        $this->statefulDomains = $statefulDomains;
         $this->extractToken = $extractToken ?? static fn (Request $request): ?string => $request->bearerToken();
         $this->validateToken = $validateToken ?? static fn (IsAuthToken $token, Request $request): bool => true;
         $this->validateUser = $validateUser ?? static fn (Authenticatable $user): bool => true;
 
+        $this->validateParameters();
         $this->validateModels();
     }
 
@@ -82,6 +90,34 @@ final class Shield
     public static function configure(Application $app, self $shield): void
     {
         $app->singleton(self::class, fn (): self => $shield);
+    }
+
+    /**
+     * Get the host (with port, if non-standard) from the application URL.
+     *
+     * Returns an empty string when no application URL is configured.
+     */
+    public static function currentApplicationUrlWithPort(): string
+    {
+        $appUrl = config('app.url');
+
+        if (! $appUrl) {
+            return '';
+        }
+
+        $parsed = parse_url($appUrl);
+
+        if (! isset($parsed['host'])) {
+            return '';
+        }
+
+        $host = $parsed['host'];
+
+        if (isset($parsed['port'])) {
+            $host .= ':'.$parsed['port'];
+        }
+
+        return $host;
     }
 
     /**
@@ -114,6 +150,11 @@ final class Shield
     /**
      * Decorate a raw random token with the configured prefix and CRC32B checksum.
      *
+     * The CRC32B checksum is a non-cryptographic format validation layer that
+     * allows early rejection of malformed tokens before hitting the database.
+     * Actual security is provided by the 288-bit random entropy and SHA256 hash
+     * stored in the database — the checksum is not a security boundary.
+     *
      * Returns the random string as-is when no prefix is configured.
      */
     public function decorateToken(string $random): string
@@ -128,8 +169,12 @@ final class Shield
     /**
      * Extract the random part from a decorated token.
      *
-     * Strips the prefix, validates the CRC32B checksum, and returns the random
-     * part. Returns null if the token is malformed or the checksum doesn't match.
+     * Strips the prefix and validates the CRC32B checksum as a format check to
+     * reject obviously malformed tokens before performing a database lookup.
+     * CRC32B is intentionally non-cryptographic here — the security boundary
+     * is the SHA256 hash comparison in the database, not this checksum.
+     *
+     * Returns null if the token is malformed or the checksum doesn't match.
      */
     public function extractRandom(string $token): ?string
     {
@@ -158,6 +203,37 @@ final class Shield
         }
 
         return $random;
+    }
+
+    /**
+     * Get the stateful domains, resolving from config when not explicitly set.
+     *
+     * @return list<string>
+     */
+    public function statefulDomains(): array
+    {
+        return $this->statefulDomains ?? array_values(array_filter(
+            array_map(mb_trim(...), config('shield.stateful', [])),
+        ));
+    }
+
+    /**
+     * Determine if subdomain matching is enabled for stateful domains.
+     */
+    public function statefulSubdomains(): bool
+    {
+        return (bool) config('shield.stateful_subdomains', false);
+    }
+
+    private function validateParameters(): void
+    {
+        if ($this->defaultTokenExpiration !== null && $this->defaultTokenExpiration < 0) {
+            throw new InvalidArgumentException('Default token expiration must be non-negative.');
+        }
+
+        if ($this->lastUsedAtDebounce < 1) {
+            throw new InvalidArgumentException('Last-used-at debounce must be at least 1 second.');
+        }
     }
 
     private function validateModels(): void

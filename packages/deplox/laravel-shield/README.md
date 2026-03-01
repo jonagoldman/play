@@ -33,22 +33,22 @@ public function register(): void
 
 ### Shield Parameters
 
-| Parameter | Type | Default | Description |
-|-----------|------|---------|-------------|
-| `tokenModel` | `class-string` | *(required)* | Your token model class |
-| `userModel` | `class-string` | *(required)* | Your authenticatable user model class |
-| `guards` | `list<string>` | `['session']` | Auth guards to try before falling back to bearer token |
-| `statefulDomains` | `list<string>` | `[]` | Domains allowed to use session cookie authentication |
-| `prefix` | `string` | `''` | Token prefix for secret scanning (e.g. `'dpl_'`) |
-| `defaultTokenExpiration` | `?int` | `2592000` (30 days) | Default token lifetime in seconds. `null` = no default, `0` = no expiration |
-| `pruneDays` | `int` | `30` | Days to keep expired tokens before pruning |
-| `lastUsedAtDebounce` | `int` | `300` | Seconds between `last_used_at` writes |
-| `secureCookies` | `bool` | `true` | Enable secure session cookie settings |
-| `csrfCookiePath` | `string` | `'/auth/csrf-cookie'` | CSRF cookie endpoint path |
-| `middlewares` | `array` | *(see below)* | Overridable middleware classes |
-| `extractToken` | `?Closure` | `bearerToken()` | Custom token extraction from request |
-| `validateToken` | `?Closure` | `fn () => true` | Custom token validation callback |
-| `validateUser` | `?Closure` | `fn () => true` | Custom user validation callback |
+| Parameter                | Type           | Default               | Description                                                                 |
+| ------------------------ | -------------- | --------------------- | --------------------------------------------------------------------------- |
+| `tokenModel`             | `class-string` | *(required)*          | Your token model class                                                      |
+| `userModel`              | `class-string` | *(required)*          | Your authenticatable user model class                                       |
+| `guards`                 | `list<string>` | `['session']`         | Auth guards to try before falling back to bearer token                      |
+| `statefulDomains`        | `list<string>` | `[]`                  | Domains allowed to use session cookie authentication                        |
+| `prefix`                 | `string`       | `''`                  | Token prefix for secret scanning (e.g. `'dpl_'`)                            |
+| `defaultTokenExpiration` | `?int`         | `2592000` (30 days)   | Default token lifetime in seconds. `null` = no default, `0` = no expiration |
+| `pruneDays`              | `int`          | `30`                  | Days to keep expired tokens before pruning                                  |
+| `lastUsedAtDebounce`     | `int`          | `300`                 | Seconds between `last_used_at` writes                                       |
+| `secureCookies`          | `bool`         | `true`                | Enable secure session cookie settings                                       |
+| `csrfCookiePath`         | `string`       | `'/auth/csrf-cookie'` | CSRF cookie endpoint path                                                   |
+| `middlewares`            | `array`        | *(see below)*         | Overridable middleware classes                                              |
+| `extractToken`           | `?Closure`     | `bearerToken()`       | Custom token extraction from request                                        |
+| `validateToken`          | `?Closure`     | `fn () => true`       | Custom token validation callback                                            |
+| `validateUser`           | `?Closure`     | `fn () => true`       | Custom user validation callback                                             |
 
 Full example with all options:
 
@@ -213,9 +213,9 @@ The `$token->plain` property contains the full decorated token (prefix + random 
 
 The `TokenType` enum defines two types:
 
-| Type | Value | Random Length |
-|------|-------|--------------|
-| `Bearer` | `'bearer'` | 48 characters |
+| Type       | Value        | Random Length |
+| ---------- | ------------ | ------------- |
+| `Bearer`   | `'bearer'`   | 48 characters |
 | `Remember` | `'remember'` | 60 characters |
 
 ### Token Prefix & Decoration
@@ -373,11 +373,11 @@ Set a key to `null` to remove that middleware from the pipeline entirely.
 
 Default middleware:
 
-| Key | Default Class |
-|-----|---------------|
-| `encrypt_cookies` | `Illuminate\Cookie\Middleware\EncryptCookies` |
-| `validate_csrf_token` | `Illuminate\Foundation\Http\Middleware\VerifyCsrfToken` |
-| `authenticate_session` | `Deplox\Shield\Middlewares\AuthenticateSession` |
+| Key                    | Default Class                                           |
+| ---------------------- | ------------------------------------------------------- |
+| `encrypt_cookies`      | `Illuminate\Cookie\Middleware\EncryptCookies`           |
+| `validate_csrf_token`  | `Illuminate\Foundation\Http\Middleware\VerifyCsrfToken` |
+| `authenticate_session` | `Deplox\Shield\Middlewares\AuthenticateSession`         |
 
 ## Token Pruning
 
@@ -404,18 +404,18 @@ return new TokenResource($token);
 
 Fields:
 
-| Field | Description |
-|-------|-------------|
-| `id` | ULID |
-| `user_id` | Owner's ID |
-| `name` | Human-readable label |
-| `type` | `bearer` or `remember` |
-| `token` | Plain token (only present immediately after creation) |
-| `expired` | Boolean |
-| `expires_at` | ISO 8601 Zulu string |
-| `last_used_at` | ISO 8601 Zulu string |
-| `created_at` | ISO 8601 Zulu string |
-| `updated_at` | ISO 8601 Zulu string |
+| Field          | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| `id`           | ULID                                                  |
+| `user_id`      | Owner's ID                                            |
+| `name`         | Human-readable label                                  |
+| `type`         | `bearer` or `remember`                                |
+| `token`        | Plain token (only present immediately after creation) |
+| `expired`      | Boolean                                               |
+| `expires_at`   | ISO 8601 Zulu string                                  |
+| `last_used_at` | ISO 8601 Zulu string                                  |
+| `created_at`   | ISO 8601 Zulu string                                  |
+| `updated_at`   | ISO 8601 Zulu string                                  |
 
 ## Polymorphic Tokens
 
@@ -477,12 +477,12 @@ Shield validates that `userModel` implements `OwnsTokens`, so both modes pass va
 
 ## Events
 
-| Event | When | Payload |
-|-------|------|---------|
-| `Illuminate\Auth\Events\Attempting` | Before token lookup | `guard: 'dynamic'`, `credentials: ['token' => ...]` |
-| `Deplox\Shield\Events\TokenAuthenticated` | After successful bearer auth | `token: Model&IsAuthToken` |
-| `Illuminate\Auth\Events\Login` | After any successful auth (session or bearer) | `guard: 'dynamic'`, `user`, `remember: false` |
-| `Illuminate\Auth\Events\Failed` | After failed auth attempt | `guard: 'dynamic'`, `user` (if found), `credentials` |
+| Event                                     | When                                          | Payload                                              |
+| ----------------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
+| `Illuminate\Auth\Events\Attempting`       | Before token lookup                           | `guard: 'dynamic'`, `credentials: ['token' => ...]`  |
+| `Deplox\Shield\Events\TokenAuthenticated` | After successful bearer auth                  | `token: Model&IsAuthToken`                           |
+| `Illuminate\Auth\Events\Login`            | After any successful auth (session or bearer) | `guard: 'dynamic'`, `user`, `remember: false`        |
+| `Illuminate\Auth\Events\Failed`           | After failed auth attempt                     | `guard: 'dynamic'`, `user` (if found), `credentials` |
 
 ## Testing
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Deplox\Shield\Guards;
 
+use Deplox\Shield\Actions\AuthenticateToken;
+use Deplox\Shield\Shield;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
-use Deplox\Shield\Actions\AuthenticateToken;
-use Deplox\Shield\Shield;
+use Throwable;
 
 final class DynamicGuard
 {
@@ -40,7 +41,11 @@ final class DynamicGuard
             }
         }
 
-        $token = ($this->shield->extractToken)($request);
+        try {
+            $token = ($this->shield->extractToken)($request);
+        } catch (Throwable) {
+            return null;
+        }
 
         if ($token) {
             $user = ($this->authenticateToken)($token);

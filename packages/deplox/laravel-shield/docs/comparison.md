@@ -135,6 +135,15 @@ Set a key to `null` to remove it. Sanctum's fork hardcodes the middleware list w
 
 Cleaner than Sanctum's static method approach: closures are type-safe, non-nullable with sensible defaults, and scoped to the config instance.
 
+### 17. Environment-driven stateful domains
+
+> ADR: [015 — Stateful Domains Config](decisions/015-stateful-domains-config.md)
+
+**Improvement.** Sanctum uses a publishable config with `SANCTUM_STATEFUL_DOMAINS` env var and auto-derives from `APP_URL`.
+laravel-shield now follows the same pattern: `config/shield.php` with `SHIELD_STATEFUL_DOMAINS` env var and `Shield::currentApplicationUrlWithPort()`.
+The nullable-param pattern also allows explicit overrides via the constructor when needed (e.g., tests), which Sanctum cannot do.
+Optional `stateful_subdomains` flag adds `*.domain/*` patterns for multi-tenant SPAs.
+
 ---
 
 ## Regressions in laravel-shield
@@ -175,6 +184,7 @@ Both traits share a common `OwnsTokens` contract and `CreatesTokens` trait, so `
 | Naming                          | Minor improvement      |
 | Login event integration         | Minor improvement      |
 | Polymorphic tokens (opt-in)     | Clear improvement      |
+| Env-driven stateful domains     | Improvement            |
 
 **Bottom line:** The architectural foundation of laravel-shield is genuinely stronger.
 DI over statics, contracts over concrete models, action classes, ULIDs, debounced writes, auto-hashing, built-in pruning.
