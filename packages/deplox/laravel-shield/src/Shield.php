@@ -65,6 +65,9 @@ final class Shield
         // Security & middleware
         public readonly bool $secureCookies = true,
         public readonly string $csrfCookiePath = '/auth/csrf-cookie',
+        // Login rate limiting
+        public readonly int $maxLoginAttempts = 5,
+        public readonly int $loginDecaySeconds = 60,
         public readonly array $middlewares = [
             'encrypt_cookies' => \Illuminate\Cookie\Middleware\EncryptCookies::class,
             'validate_csrf_token' => \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
