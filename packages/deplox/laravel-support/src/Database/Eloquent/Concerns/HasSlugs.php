@@ -13,13 +13,6 @@ use Illuminate\Support\Str;
 trait HasSlugs
 {
     /**
-     * The model's sluggable attributes map.
-     */
-    protected $sluggable = [
-        'name' => 'slug',
-    ];
-
-    /**
      * Boot the trait for the model class.
      */
     public static function bootHasSlugs(): void
@@ -52,9 +45,16 @@ trait HasSlugs
 
     /**
      * Get the sluggable attributes map for the model.
+     *
+     * Override this method to customize the source-to-target mapping. The default
+     * is `['name' => 'slug']`. Implemented as a method (rather than a property)
+     * to avoid PHP 8.4 trait property conflicts with final classes that may
+     * redefine the same name.
+     *
+     * @return array<string, string>
      */
     public function getSluggable(): array
     {
-        return $this->sluggable;
+        return $this->sluggable ?? ['name' => 'slug'];
     }
 }
