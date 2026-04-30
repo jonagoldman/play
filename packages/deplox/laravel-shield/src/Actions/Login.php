@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Deplox\Shield\Actions;
 
+use Deplox\Shield\Events\FailedLogin;
 use Deplox\Shield\Shield;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Cache\RateLimiter;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -23,6 +25,7 @@ final class Login
         private Shield $shield,
         private RateLimiter $limiter,
         private Request $request,
+        private DispatcherContract $dispatcher,
     ) {}
 
     /**
@@ -44,6 +47,12 @@ final class Login
 
         if (! $success) {
             $this->limiter->hit($throttleKey, $this->shield->loginDecaySeconds);
+
+            $this->dispatcher->dispatch(new FailedLogin(
+                field: $field,
+                identifier: (string) ($credentials[$field] ?? ''),
+                ip: $this->request->ip(),
+            ));
 
             throw ValidationException::withMessages([
                 $field => [__('auth.failed')],
