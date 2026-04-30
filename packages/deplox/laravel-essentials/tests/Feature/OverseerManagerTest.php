@@ -76,3 +76,27 @@ test('toArray serializes inspect() output to nested arrays', function (): void {
         ->and($array)->toHaveKey('environment')
         ->and($array)->toHaveKey('router');
 });
+
+test('router inspector replaces closure actions with the string "closure"', function (): void {
+    $this->app['router']->get('/__overseer-closure-route', fn () => 'ok');
+
+    $routes = $this->overseer->router()['routes'] ?? [];
+
+    $found = false;
+
+    array_walk_recursive($routes, function (mixed $value, mixed $key) use (&$found): void {
+        if ($key === 'uses' && $value === 'closure') {
+            $found = true;
+        }
+    });
+
+    expect($found)->toBeTrue();
+});
+
+test('router inspector output is JSON-encodable', function (): void {
+    $this->app['router']->get('/__overseer-json-route', fn () => 'ok');
+
+    $json = json_encode($this->overseer->router(), JSON_THROW_ON_ERROR);
+
+    expect($json)->toBeString();
+});

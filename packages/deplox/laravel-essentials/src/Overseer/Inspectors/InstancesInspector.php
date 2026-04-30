@@ -7,6 +7,7 @@ namespace Deplox\Essentials\Overseer\Inspectors;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Arr;
 use ReflectionClass;
+use ReflectionException;
 
 final class InstancesInspector
 {
@@ -16,8 +17,11 @@ final class InstancesInspector
      */
     public function inspect(Application $app): array
     {
-        $appReflection = new ReflectionClass($app);
-        $property = $appReflection->getProperty('instances');
+        try {
+            $property = new ReflectionClass($app)->getProperty('instances');
+        } catch (ReflectionException) {
+            return [];
+        }
 
         return Arr::map($property->getValue($app), fn ($instance) => is_object($instance) ? get_class($instance) : $instance);
     }

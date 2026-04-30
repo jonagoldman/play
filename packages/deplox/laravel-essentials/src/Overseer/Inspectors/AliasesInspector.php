@@ -6,6 +6,7 @@ namespace Deplox\Essentials\Overseer\Inspectors;
 
 use Illuminate\Contracts\Foundation\Application;
 use ReflectionClass;
+use ReflectionException;
 
 final class AliasesInspector
 {
@@ -15,8 +16,11 @@ final class AliasesInspector
      */
     public function inspect(Application $app): array
     {
-        $appReflection = new ReflectionClass($app);
-        $property = $appReflection->getProperty('abstractAliases');
+        try {
+            $property = new ReflectionClass($app)->getProperty('abstractAliases');
+        } catch (ReflectionException) {
+            return [];
+        }
 
         return $property->getValue($app);
     }
