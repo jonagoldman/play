@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Deplox\Shield\Tests\Fixtures;
 
+use Deplox\Shield\Concerns\HasTokens;
+use Deplox\Shield\Contracts\HasTokens as HasTokensContract;
+use Illuminate\Auth\MustVerifyEmail;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Deplox\Shield\Concerns\HasTokens;
-use Deplox\Shield\Contracts\HasTokens as HasTokensContract;
 
 /**
  * @property-read string $id
@@ -22,13 +26,16 @@ use Deplox\Shield\Contracts\HasTokens as HasTokensContract;
  * @property-read \Carbon\CarbonInterface $updated_at
  */
 #[UseFactory(UserFactory::class)]
-final class User extends Authenticatable implements HasTokensContract
+final class User extends Authenticatable implements CanResetPasswordContract, HasTokensContract, MustVerifyEmailContract
 {
+    use CanResetPassword;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     use HasTokens;
     use HasUlids;
+    use MustVerifyEmail;
 
     /** @var list<string> */
     protected $fillable = [
