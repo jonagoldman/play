@@ -25,6 +25,12 @@ final class SupportServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'support');
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../resources/lang' => $this->app->langPath('vendor/support'),
+            ], 'laravel-support-translations');
+        }
     }
 }
