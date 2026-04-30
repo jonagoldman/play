@@ -17,11 +17,6 @@ use ReflectionException;
 trait HasParent
 {
     /**
-     * @var bool
-     */
-    public $hasParent = true;
-
-    /**
      * @throws ReflectionException
      */
     public static function bootHasParent(): void
@@ -41,6 +36,17 @@ trait HasParent
                 $query->where($query->getModel()->getTable().'.'.$instance->getInheritanceColumn(), $instance->classToAlias($instance::class));
             }
         });
+    }
+
+    /**
+     * Indicates the model uses the HasParent trait.
+     *
+     * Implemented as a method (rather than a property) to avoid PHP 8.4 trait property
+     * conflicts with final classes that may redefine the same name.
+     */
+    public function hasParent(): bool
+    {
+        return true;
     }
 
     public function parentHasHasChildrenTrait(): bool

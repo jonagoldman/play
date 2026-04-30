@@ -19,14 +19,33 @@ use UnitEnum;
 trait HasChildren
 {
     /**
-     * @var bool
+     * Tracks parents currently inside their boot lifecycle, keyed by class name.
+     *
+     * @var array<class-string, bool>
      */
-    protected static $parentBootMethods;
+    protected static array $parentBootingClasses = [];
 
     /**
      * @var bool
      */
     protected $hasChildren = true;
+
+    /**
+     * Bootstrap the HasChildren trait.
+     *
+     * Marks the parent class as booting, then registers a 'booted' callback that
+     * clears the flag once the boot lifecycle completes. The callback is registered
+     * via parent::registerModelEvent to bypass this trait's override (which would
+     * otherwise propagate to all child classes and recurse).
+     */
+    public static function bootHasChildren(): void
+    {
+        self::$parentBootingClasses[static::class] = true;
+
+        parent::registerModelEvent('booted', static function (): void {
+            unset(self::$parentBootingClasses[static::class]);
+        });
+    }
 
     /**
      * Create a new instance of the given model.
@@ -91,7 +110,7 @@ trait HasChildren
     {
         $instance = $this->newRelatedInstance($related);
 
-        if (is_null($foreignKey) && $instance->hasParent) {
+        if (is_null($foreignKey) && method_exists($instance, 'hasParent') && $instance->hasParent()) {
             $foreignKey = Str::snake($instance->getClassNameForRelationships()).'_'.$instance->getKeyName();
         }
 
@@ -136,7 +155,7 @@ trait HasChildren
     ): BelongsToMany {
         $instance = $this->newRelatedInstance($related);
 
-        if (is_null($table) && $instance->hasParent) {
+        if (is_null($table) && method_exists($instance, 'hasParent') && $instance->hasParent()) {
             $table = $this->joiningTable($instance->getClassNameForRelationships());
         }
 
@@ -217,26 +236,7 @@ trait HasChildren
 
     protected static function parentIsBooting(): bool
     {
-        if (! isset(self::$parentBootMethods)) {
-            self::$parentBootMethods[] = 'boot';
-
-            foreach (class_uses_recursive(self::class) as $trait) {
-                self::$parentBootMethods[] = 'boot'.class_basename($trait);
-            }
-
-            self::$parentBootMethods = array_flip(self::$parentBootMethods);
-        }
-
-        foreach (debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) as $trace) {
-            $class = $trace['class'] ?? null;
-            $function = $trace['function'] ?? '';
-
-            if ($class === self::class && isset(self::$parentBootMethods[$function])) {
-                return true;
-            }
-        }
-
-        return false;
+        return self::$parentBootingClasses[static::class] ?? false;
     }
 
     /**
