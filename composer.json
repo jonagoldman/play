@@ -56,7 +56,9 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
-            "Deplox\\Shield\\Tests\\": "packages/deplox/laravel-shield/tests/"
+            "Deplox\\Shield\\Tests\\": "packages/deplox/laravel-shield/tests/",
+            "Deplox\\Support\\Tests\\": "packages/deplox/laravel-support/tests/",
+            "Deplox\\Essentials\\Tests\\": "packages/deplox/laravel-essentials/tests/"
         }
     },
     "scripts": {

@@ -14,6 +14,12 @@
         <testsuite name="Shield">
             <directory>packages/deplox/laravel-shield/tests/Feature</directory>
         </testsuite>
+        <testsuite name="Support">
+            <directory>packages/deplox/laravel-support/tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Essentials">
+            <directory>packages/deplox/laravel-essentials/tests/Feature</directory>
+        </testsuite>
     </testsuites>
     <source>
         <include>

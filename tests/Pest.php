@@ -40,6 +40,13 @@ pest()->extend(Tests\TestCase::class)
     })
     ->in('../packages/deplox/laravel-shield/tests/Feature');
 
+pest()->extend(Tests\TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('../packages/deplox/laravel-support/tests/Feature');
+
+pest()->extend(Tests\TestCase::class)
+    ->in('../packages/deplox/laravel-essentials/tests/Feature');
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
