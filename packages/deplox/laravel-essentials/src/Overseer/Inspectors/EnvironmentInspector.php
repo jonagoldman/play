@@ -38,6 +38,11 @@ final class EnvironmentInspector
     {
         try {
             $resolver = $app->make(\Illuminate\Database\ConnectionResolverInterface::class);
+        } catch (Throwable) {
+            return '-';
+        }
+
+        try {
             $version = $resolver->select('select version() as version')[0]->{'version'} ?? null;
 
             if (is_string($version)) {
@@ -47,10 +52,6 @@ final class EnvironmentInspector
             // Driver doesn't support `select version()` (e.g. sqlite) or DB unreachable.
         }
 
-        try {
-            return $app->make(\Illuminate\Database\ConnectionResolverInterface::class)->getDriverName();
-        } catch (Throwable) {
-            return '-';
-        }
+        return $resolver->getDriverName();
     }
 }

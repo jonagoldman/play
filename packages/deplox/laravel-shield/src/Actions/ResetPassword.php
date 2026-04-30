@@ -14,11 +14,11 @@ use Illuminate\Validation\Factory as ValidatorFactory;
 use Illuminate\Validation\ValidationException;
 
 /**
- * Complete a password reset using a token previously delivered via SendPasswordReset.
+ * Complete a password reset using a previously delivered token.
  *
  * Returns the broker's status string. On success, dispatches Laravel's PasswordReset
- * event, which the package's RevokeTokensOnPasswordReset listener consumes to wipe
- * the user's tokens (Phase 3.5).
+ * event so listeners can react (the package's RevokeTokensOnPasswordReset wipes tokens
+ * when revokeOnPasswordChange is enabled).
  */
 final readonly class ResetPassword
 {

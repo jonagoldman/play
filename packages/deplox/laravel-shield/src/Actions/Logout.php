@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Deplox\Shield\Actions;
 
 use Deplox\Shield\Contracts\IsAuthToken;
+use Deplox\Shield\Enums\TokenRevocationReason;
 use Deplox\Shield\Events\TokenRevoked;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
@@ -28,7 +29,7 @@ final class Logout
         $token = $user->getRelation('token');
 
         if ($token instanceof Model && $token instanceof IsAuthToken) {
-            $this->dispatchRevoked($token, $user, 'logout');
+            $this->dispatchRevoked($token, $user, TokenRevocationReason::Logout);
             $token->delete();
 
             return;
@@ -44,7 +45,7 @@ final class Logout
      * Returns the number of tokens revoked. Dispatches a TokenRevoked event
      * per token so audit listeners can record each revocation.
      */
-    public function all(Authenticatable $user, string $reason = 'logout-all'): int
+    public function all(Authenticatable $user, TokenRevocationReason $reason = TokenRevocationReason::LogoutAll): int
     {
         if (! method_exists($user, 'tokens')) {
             return 0;
@@ -60,7 +61,7 @@ final class Logout
         return $user->tokens()->delete();
     }
 
-    private function dispatchRevoked(Model&IsAuthToken $token, Authenticatable $user, string $reason): void
+    private function dispatchRevoked(Model&IsAuthToken $token, Authenticatable $user, TokenRevocationReason $reason): void
     {
         $this->dispatcher?->dispatch(new TokenRevoked($token, $user, $reason));
     }

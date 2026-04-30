@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Deplox\Shield\Enums\RevokeOnPasswordChange;
+use Deplox\Shield\Enums\TokenRevocationReason;
 use Deplox\Shield\Enums\TokenType;
 use Deplox\Shield\Events\TokenRevoked;
 use Deplox\Shield\Listeners\RevokeTokensOnPasswordReset;
@@ -74,7 +75,7 @@ test('listener dispatches TokenRevoked once per revoked token with reason "passw
     Event::assertDispatched(TokenRevoked::class, 2);
     Event::assertDispatched(
         TokenRevoked::class,
-        fn (TokenRevoked $e): bool => $e->reason === 'password-reset',
+        fn (TokenRevoked $e): bool => $e->reason === TokenRevocationReason::PasswordReset,
     );
 });
 

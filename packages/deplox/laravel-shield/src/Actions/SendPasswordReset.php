@@ -13,9 +13,7 @@ use Illuminate\Validation\ValidationException;
  * Initiate a password reset by emailing a reset link.
  *
  * Thin delegate to Laravel's password broker. Returns the broker's status string
- * (Password::RESET_LINK_SENT, INVALID_USER, RESET_THROTTLED, ...). Pair with
- * RevokeTokensOnPasswordReset (Phase 3.5) to wipe tokens once the user completes
- * the reset.
+ * (Password::RESET_LINK_SENT, INVALID_USER, RESET_THROTTLED, ...).
  */
 final readonly class SendPasswordReset
 {

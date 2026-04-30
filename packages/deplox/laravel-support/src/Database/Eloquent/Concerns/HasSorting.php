@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Request;
  *
  * Accepts a comma-separated list of columns prefixed with `-` for descending,
  * e.g. `?sort=-created_at,name`. Filters against an allowlist; invalid columns
- * are silently dropped (mirrors CanIncludeRelationships).
+ * are silently dropped.
  *
  * @mixin \Illuminate\Database\Eloquent\Model
  */
@@ -42,12 +42,9 @@ trait HasSorting
                 continue;
             }
 
-            $direction = 'asc';
+            $direction = str_starts_with($part, '-') ? 'desc' : 'asc';
 
-            if (str_starts_with($part, '-')) {
-                $direction = 'desc';
-                $part = mb_substr($part, 1);
-            } elseif (str_starts_with($part, '+')) {
+            if (str_starts_with($part, '-') || str_starts_with($part, '+')) {
                 $part = mb_substr($part, 1);
             }
 

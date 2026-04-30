@@ -16,4 +16,14 @@ return [
     'set_default_passwords' => true,
     'default_string_length' => 255,
     'default_morph_key_type' => 'int',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Per-request structured logging
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, the LogRequests middleware emits an INFO log entry per
+    | request with method, path, status, and duration_ms. Off by default.
+    */
+    'log_requests' => false,
 ];

@@ -6,6 +6,7 @@ namespace Deplox\Shield\Listeners;
 
 use Deplox\Shield\Contracts\IsAuthToken;
 use Deplox\Shield\Enums\RevokeOnPasswordChange;
+use Deplox\Shield\Enums\TokenRevocationReason;
 use Deplox\Shield\Enums\TokenType;
 use Deplox\Shield\Events\TokenRevoked;
 use Deplox\Shield\Shield;
@@ -48,7 +49,7 @@ final readonly class RevokeTokensOnPasswordReset
         $tokens = $query->get();
 
         foreach ($tokens as $token) {
-            $this->dispatcher->dispatch(new TokenRevoked($token, $user, 'password-reset'));
+            $this->dispatcher->dispatch(new TokenRevoked($token, $user, TokenRevocationReason::PasswordReset));
         }
 
         $query->delete();

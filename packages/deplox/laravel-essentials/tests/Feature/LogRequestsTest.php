@@ -7,7 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-test('logs an info entry with method, path, status, and duration', function (): void {
+beforeEach(function (): void {
+    config(['essentials.log_requests' => true]);
+});
+
+test('logs an info entry with method, path, status, and duration when enabled', function (): void {
     Log::spy();
 
     $request = Request::create('/example/path', 'POST');
@@ -34,4 +38,14 @@ test('returns the response unchanged', function (): void {
 
     expect($response->getContent())->toBe('hello')
         ->and($response->getStatusCode())->toBe(200);
+});
+
+test('does not log when essentials.log_requests is false', function (): void {
+    config(['essentials.log_requests' => false]);
+
+    Log::spy();
+
+    new LogRequests()->handle(Request::create('/'), fn () => new Response('ok'));
+
+    Log::shouldNotHaveReceived('info');
 });

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Deplox\Shield\Actions\Logout;
+use Deplox\Shield\Enums\TokenRevocationReason;
 use Deplox\Shield\Events\TokenRevoked;
 use Deplox\Shield\Tests\Fixtures\Token;
 use Deplox\Shield\Tests\Fixtures\User;
@@ -32,12 +33,12 @@ test('Logout::all dispatches TokenRevoked once per token with the given reason',
     Token::factory()->for($user, 'owner')->create();
     Token::factory()->for($user, 'owner')->create();
 
-    app(Logout::class)->all($user, reason: 'password-changed');
+    app(Logout::class)->all($user, reason: TokenRevocationReason::PasswordReset);
 
     Event::assertDispatched(TokenRevoked::class, 2);
     Event::assertDispatched(
         TokenRevoked::class,
-        fn (TokenRevoked $e): bool => $e->reason === 'password-changed' && $e->user->getKey() === $user->getKey(),
+        fn (TokenRevoked $e): bool => $e->reason === TokenRevocationReason::PasswordReset && $e->user->getKey() === $user->getKey(),
     );
 });
 
@@ -63,6 +64,6 @@ test('Logout dispatches TokenRevoked for the current bearer token', function ():
 
     Event::assertDispatched(
         TokenRevoked::class,
-        fn (TokenRevoked $e): bool => $e->reason === 'logout' && $e->token->getKey() === $token->getKey(),
+        fn (TokenRevoked $e): bool => $e->reason === TokenRevocationReason::Logout && $e->token->getKey() === $token->getKey(),
     );
 });
