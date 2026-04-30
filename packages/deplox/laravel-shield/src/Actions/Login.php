@@ -26,7 +26,7 @@ final class Login
     ) {}
 
     /**
-     * @param  array{email?: string, password?: string}  $credentials
+     * @param  array<string, mixed>  $credentials  Must contain the $field key (default 'email') and 'password'.
      *
      * @throws ValidationException
      */
@@ -57,6 +57,8 @@ final class Login
 
     /**
      * Validate credentials without session side effects (for API/token flow).
+     *
+     * @param  array<string, mixed>  $credentials
      */
     private function validate(SessionGuard $guard, array $credentials): bool
     {

@@ -9,6 +9,7 @@ use App\Models\Token;
 use App\Models\User;
 use Deplox\Shield\Shield;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\JsonApi\JsonApiResource;
@@ -33,7 +34,7 @@ final class AppServiceProvider extends ServiceProvider
             userModel: User::class,
             guards: ['session'],
             prefix: 'dpl_',
-            validateUser: fn (User $user): bool => $user->verified_at !== null,
+            validateUser: fn (Authenticatable $user): bool => $user instanceof User && $user->verified_at !== null,
         ));
     }
 
