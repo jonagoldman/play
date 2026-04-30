@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Deplox\Essentials\Dogma\Principles;
 
+use Deplox\Essentials\EssentialsConfig;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Deplox\Essentials\EssentialsConfig;
 
 final class ModelPrinciple
 {
@@ -50,6 +50,7 @@ final class ModelPrinciple
             'preventsSilentlyDiscardingAttributes' => Model::preventsSilentlyDiscardingAttributes(),
             'preventsAccessingMissingAttributes' => Model::preventsAccessingMissingAttributes(),
             'automaticallyEagerLoadRelationships' => Model::isAutomaticallyEagerLoadingRelationships(),
+            'requireMorphMap' => Relation::requiresMorphMap(),
         ];
     }
 }

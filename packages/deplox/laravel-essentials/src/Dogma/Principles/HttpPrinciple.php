@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Deplox\Essentials\Dogma\Principles;
 
+use Deplox\Essentials\EssentialsConfig;
+use Illuminate\Foundation\Vite as ViteResolver;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Sleep;
-use Deplox\Essentials\EssentialsConfig;
 use ReflectionClass;
 
 final class HttpPrinciple
@@ -46,10 +47,14 @@ final class HttpPrinciple
     {
         $reflectionSleep = new ReflectionClass(Sleep::class);
 
+        $vite = app(ViteResolver::class);
+        $viteReflection = new ReflectionClass($vite);
+        $prefetchStrategy = $viteReflection->getProperty('prefetchStrategy')->getValue($vite);
+
         return [
             'fakeSleep' => $reflectionSleep->getProperty('fake')->getValue(),
             'forceHttps' => URL::getRequest()->getScheme() === 'https',
-            'aggressivePrefetching' => null, // todo: expose setting
+            'aggressivePrefetching' => $prefetchStrategy === 'aggressive',
             'preventStrayRequests' => Http::preventingStrayRequests(),
         ];
     }
