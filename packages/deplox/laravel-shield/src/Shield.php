@@ -8,6 +8,10 @@ use Closure;
 use Deplox\Shield\Contracts\IsAuthToken;
 use Deplox\Shield\Contracts\OwnsTokens;
 use Deplox\Shield\Controllers\CsrfCookieController;
+use Deplox\Shield\Controllers\ResetPasswordController;
+use Deplox\Shield\Controllers\SendEmailVerificationController;
+use Deplox\Shield\Controllers\SendPasswordResetController;
+use Deplox\Shield\Controllers\VerifyEmailController;
 use Deplox\Shield\Enums\RevokeOnPasswordChange;
 use Deplox\Shield\Enums\TokenLimitBehavior;
 use Deplox\Shield\Guards\DynamicGuard;
@@ -129,6 +133,46 @@ final class Shield
         }
 
         return $host;
+    }
+
+    /**
+     * Register opt-in password reset routes.
+     *
+     * Defines:
+     *   POST {prefix}/email   → SendPasswordResetController (named password.email)
+     *   POST {prefix}/reset   → ResetPasswordController     (named password.reset)
+     *
+     * Call this from your AppServiceProvider::boot() if you want the package's
+     * default controllers; omit the call to wire your own routes.
+     */
+    public static function registerPasswordResetRoutes(string $prefix = 'password', array $middleware = ['api']): void
+    {
+        Route::middleware($middleware)->prefix($prefix)->group(function (): void {
+            Route::post('/email', SendPasswordResetController::class)->name('password.email');
+            Route::post('/reset', ResetPasswordController::class)->name('password.reset');
+        });
+    }
+
+    /**
+     * Register opt-in email verification routes.
+     *
+     * Defines:
+     *   POST {prefix}/verification-notification → SendEmailVerificationController (named verification.send)
+     *   GET  {prefix}/verify/{id}/{hash}        → VerifyEmailController            (named verification.verify)
+     *
+     * The verify route requires a valid signed URL — generate it via
+     * URL::temporarySignedRoute('verification.verify', $expiry, [...]).
+     */
+    public static function registerEmailVerificationRoutes(string $prefix = 'email', array $middleware = ['api']): void
+    {
+        // Resend route requires authentication; verify route is protected by signed URL only.
+        Route::middleware([...$middleware, 'auth:dynamic'])->prefix($prefix)->group(function (): void {
+            Route::post('/verification-notification', SendEmailVerificationController::class)->name('verification.send');
+        });
+
+        Route::middleware($middleware)->prefix($prefix)->group(function (): void {
+            Route::get('/verify/{id}/{hash}', VerifyEmailController::class)->name('verification.verify');
+        });
     }
 
     /**
