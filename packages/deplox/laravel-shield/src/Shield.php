@@ -8,10 +8,15 @@ use Closure;
 use Deplox\Shield\Contracts\IsAuthToken;
 use Deplox\Shield\Contracts\OwnsTokens;
 use Deplox\Shield\Controllers\CsrfCookieController;
+use Deplox\Shield\Enums\RevokeOnPasswordChange;
+use Deplox\Shield\Enums\TokenLimitBehavior;
 use Deplox\Shield\Guards\DynamicGuard;
+use Deplox\Shield\Listeners\RevokeTokensOnPasswordReset;
 use Deplox\Shield\Middlewares\StatefulFrontend;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Contracts\Events\Dispatcher as EventDispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -62,6 +67,9 @@ final class Shield
         public readonly ?int $defaultTokenExpiration = 60 * 60 * 24 * 30,
         public readonly int $pruneDays = 30,
         public readonly int $lastUsedAtDebounce = 300,
+        public readonly ?int $maxTokensPerUser = null,
+        public readonly TokenLimitBehavior $onTokenLimit = TokenLimitBehavior::Reject,
+        public readonly RevokeOnPasswordChange $revokeOnPasswordChange = RevokeOnPasswordChange::Bearer,
         // Security & middleware
         public readonly bool $secureCookies = true,
         public readonly string $csrfCookiePath = '/auth/csrf-cookie',
@@ -148,6 +156,13 @@ final class Shield
 
         Route::middleware(['api', StatefulFrontend::class])
             ->get($this->csrfCookiePath, CsrfCookieController::class);
+
+        if ($this->revokeOnPasswordChange !== RevokeOnPasswordChange::None) {
+            $app->make(EventDispatcher::class)->listen(
+                PasswordReset::class,
+                [RevokeTokensOnPasswordReset::class, 'handle'],
+            );
+        }
     }
 
     /**
@@ -236,6 +251,10 @@ final class Shield
 
         if ($this->lastUsedAtDebounce < 1) {
             throw new InvalidArgumentException('Last-used-at debounce must be at least 1 second.');
+        }
+
+        if ($this->maxTokensPerUser !== null && $this->maxTokensPerUser < 1) {
+            throw new InvalidArgumentException('Max tokens per user must be a positive integer or null.');
         }
     }
 
