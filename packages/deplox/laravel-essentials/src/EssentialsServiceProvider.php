@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Deplox\Essentials;
 
-use Illuminate\Support\ServiceProvider;
+use Deplox\Essentials\Console\HealthCommand;
 use Deplox\Essentials\Database\Commands\DbDropCommand;
 use Deplox\Essentials\Database\Commands\DbMakeCommand;
+use Deplox\Essentials\Database\Commands\DbWaitCommand;
 use Deplox\Essentials\Dogma\DogmaManager;
 use Deplox\Essentials\Overseer\OverseerManager;
+use Illuminate\Support\ServiceProvider;
 use Override;
 
 final class EssentialsServiceProvider extends ServiceProvider
@@ -41,6 +43,8 @@ final class EssentialsServiceProvider extends ServiceProvider
             $this->commands([
                 DbDropCommand::class,
                 DbMakeCommand::class,
+                DbWaitCommand::class,
+                HealthCommand::class,
             ]);
         }
 
