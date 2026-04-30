@@ -10,8 +10,15 @@ arch()->preset()->php()
 
 /**
  * It ensures you are not using code that could lead to security vulnerabilities.
+ *
+ * VerifyEmail uses sha1(email) intentionally to match Laravel's default
+ * VerifyEmail notification (Illuminate\Auth\Notifications\VerifyEmail), which
+ * is the framework's stable hash format for email verification URLs. Changing
+ * the algorithm would break compatibility with notifications generated outside
+ * the package.
  */
-arch()->preset()->security();
+arch()->preset()->security()
+    ->ignoring('Deplox\Shield\Actions\VerifyEmail');
 
 /**
  * It ensures the project structure is following well-known Laravel conventions.
