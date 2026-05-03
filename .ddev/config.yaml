@@ -4,15 +4,13 @@ docroot: public
 php_version: "8.5"
 webserver_type: nginx-fpm
 disable_settings_management: true
-xdebug_enabled: false
 database:
   type: mariadb
   version: "11.8"
 host_db_port: "32797"
-use_dns_when_possible: true
 timezone: UTC
 nodejs_version: "24"
-corepack_enable: false
+corepack_enable: true
 hooks:
   post-start:
-    - exec: ddev auth ssh
+    - exec-host: ddev auth ssh
