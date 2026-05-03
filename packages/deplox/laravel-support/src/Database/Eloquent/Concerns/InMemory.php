@@ -23,22 +23,35 @@ trait InMemory
 {
     protected static $sushiConnection;
 
+    /**
+     * Per-class pending migration state, populated during boot and consumed on
+     * the first connection resolution. Migrations are deferred out of the boot
+     * lifecycle because Laravel 13 forbids instantiating a model while it is
+     * still booting (see Model::bootIfNotBooted).
+     *
+     * Value shape: ['cachePath' => string, 'dataPath' => string]|null
+     *   - array: cache-file path needs migration AND mtime touch after
+     *   - null:  in-memory db needs migration only (no touch)
+     *
+     * @var array<class-string, array{cachePath: string, dataPath: string}|null>
+     */
+    protected static array $sushiPendingMigration = [];
+
     public static function bootInMemory(): void
     {
-        $instance = (new static);
-
         $cacheFileName = Str::kebab(str_replace('\\', '', static::class)).'.sqlite';
         $cacheDirectory = App::storagePath('framework/cache/sushi');
 
         File::ensureDirectoryExists($cacheDirectory);
 
         $cachePath = $cacheDirectory.DIRECTORY_SEPARATOR.$cacheFileName;
-        $dataPath = $instance->sushiCacheReferencePath();
+        $dataPath = new ReflectionClass(static::class)->getFileName();
+        $shouldCache = property_exists(static::class, 'rows');
 
         // no-caching-capabilities
-        if (! $instance->sushiShouldCache()) {
+        if (! $shouldCache) {
             static::setSqliteConnection(':memory:');
-            $instance->migrate();
+            static::$sushiPendingMigration[static::class] = null;
         }
         // cache-file-found-and-up-to-date
         elseif (File::exists($cachePath) && File::lastModified($dataPath) <= File::lastModified($cachePath)) {
@@ -48,13 +61,26 @@ trait InMemory
         else {
             File::put($cachePath, '');
             static::setSqliteConnection($cachePath);
-            $instance->migrate();
-            touch($cachePath, File::lastModified($dataPath));
+            static::$sushiPendingMigration[static::class] = ['cachePath' => $cachePath, 'dataPath' => $dataPath];
         }
     }
 
     public static function resolveConnection($connection = null)
     {
+        // Run any deferred migration on the first connection resolve. Unset
+        // the entry before calling migrate() so the recursive resolveConnection
+        // calls Eloquent makes during inserts short-circuit here.
+        if (array_key_exists(static::class, static::$sushiPendingMigration)) {
+            $pending = static::$sushiPendingMigration[static::class];
+            unset(static::$sushiPendingMigration[static::class]);
+
+            new static()->migrate();
+
+            if ($pending !== null) {
+                touch($pending['cachePath'], File::lastModified($pending['dataPath']));
+            }
+        }
+
         return static::$sushiConnection;
     }
 

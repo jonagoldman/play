@@ -221,15 +221,17 @@ trait HasChildren
     {
         parent::registerModelEvent($event, $callback);
 
-        $childTypes = (new static)->getChildTypes();
+        // Short-circuit before instantiating: child propagation only runs when
+        // we're being called on the parent class itself AND the parent isn't
+        // currently booting. Skipping early avoids `new static` during a child
+        // class's boot, which Laravel 13 forbids (Model::bootIfNotBooted).
+        if (static::class !== self::class || self::parentIsBooting()) {
+            return;
+        }
 
-        // We don't want to register the callbacks that happen in the boot method of the parent, as they'll be called
-        // from the child's boot method as well.
-        if (static::class === self::class && $childTypes !== [] && ! self::parentIsBooting()) {
-            foreach ($childTypes as $childClass) {
-                if ($childClass !== self::class) {
-                    $childClass::registerModelEvent($event, $callback);
-                }
+        foreach ((new static)->getChildTypes() as $childClass) {
+            if ($childClass !== self::class) {
+                $childClass::registerModelEvent($event, $callback);
             }
         }
     }
