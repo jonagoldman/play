@@ -30,7 +30,7 @@
         "*.css": "tailwindcss"
     },
     "intelephense.environment.documentRoot": "public",
-    "intelephense.environment.phpVersion": "8.4",
+    "intelephense.environment.phpVersion": "8.5",
     "search.exclude": {
         "composer.lock": true,
         "pnpm-lock.yaml": true,

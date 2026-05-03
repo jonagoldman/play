@@ -15,15 +15,15 @@
         "deplox/laravel-shield": "dev-master",
         "deplox/laravel-essentials": "dev-master",
         "deplox/laravel-support": "dev-master",
-        "laravel/framework": "dev-12.x-opinionated as 12.53.0",
-        "laravel/tinker": "^2.11.0",
+        "laravel/framework": "dev-13.x-opinionated as 13.7.0",
+        "laravel/tinker": "^3.0.2",
         "symfony/filesystem": "^8.0.1"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.1.9",
         "fakerphp/faker": "^1.24.1",
         "larastan/larastan": "^3.9.1",
-        "laravel/boost": "^2.1",
+        "laravel/boost": "^2.4.1",
         "laravel/pail": "^1.2.4",
         "laravel/pint": "^1.27.0",
         "laravel/sail": "^1.52.0",

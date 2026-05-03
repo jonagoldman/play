@@ -82,7 +82,7 @@ final class Shield
         public readonly int $loginDecaySeconds = 60,
         public readonly array $middlewares = [
             'encrypt_cookies' => \Illuminate\Cookie\Middleware\EncryptCookies::class,
-            'validate_csrf_token' => \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            'validate_csrf_token' => \Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
             'authenticate_session' => Middlewares\AuthenticateSession::class,
         ],
         // Extension callbacks (nullable params -> non-nullable properties)

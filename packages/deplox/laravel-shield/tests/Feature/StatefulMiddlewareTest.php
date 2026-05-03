@@ -16,7 +16,7 @@ test('auth config includes default middleware', function (): void {
 
     expect($shield->middlewares)->toBe([
         'encrypt_cookies' => Illuminate\Cookie\Middleware\EncryptCookies::class,
-        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+        'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
         'authenticate_session' => AuthenticateSession::class,
     ]);
 });
@@ -27,13 +27,13 @@ test('auth config allows overriding a single middleware', function (): void {
         userModel: User::class,
         middlewares: [
             'encrypt_cookies' => 'App\Http\Middleware\CustomEncryptCookies',
-            'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
             'authenticate_session' => AuthenticateSession::class,
         ],
     );
 
     expect($shield->middlewares['encrypt_cookies'])->toBe('App\Http\Middleware\CustomEncryptCookies')
-        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)
         ->and($shield->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
 });
 
@@ -43,13 +43,13 @@ test('auth config allows removing middleware via null', function (): void {
         userModel: User::class,
         middlewares: [
             'encrypt_cookies' => null,
-            'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+            'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class,
             'authenticate_session' => AuthenticateSession::class,
         ],
     );
 
     expect($shield->middlewares['encrypt_cookies'])->toBeNull()
-        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class)
+        ->and($shield->middlewares['validate_csrf_token'])->toBe(Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)
         ->and($shield->middlewares['authenticate_session'])->toBe(AuthenticateSession::class);
 });
 
