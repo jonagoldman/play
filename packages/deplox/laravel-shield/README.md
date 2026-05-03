@@ -5,7 +5,7 @@ Token-based authentication for Laravel with session-first dynamic guard, automat
 ## Requirements
 
 - PHP 8.4+
-- Laravel 12+
+- Laravel 13+
 
 ## Installation
 
@@ -43,8 +43,13 @@ public function register(): void
 | `defaultTokenExpiration` | `?int`         | `2592000` (30 days)   | Default token lifetime in seconds. `null` = no default, `0` = no expiration |
 | `pruneDays`              | `int`          | `30`                  | Days to keep expired tokens before pruning                                  |
 | `lastUsedAtDebounce`     | `int`          | `300`                 | Seconds between `last_used_at` writes                                       |
+| `maxTokensPerUser`       | `?int`         | `null`                | Max tokens per user (`null` = unlimited)                                    |
+| `onTokenLimit`           | `TokenLimitBehavior` | `Reject`        | Behaviour when the token cap is reached (`Reject` or `PruneOldest`)         |
+| `revokeOnPasswordChange` | `RevokeOnPasswordChange` | `Bearer`    | Which tokens to revoke on password reset (`All`, `Bearer`, or `None`)        |
 | `secureCookies`          | `bool`         | `true`                | Enable secure session cookie settings                                       |
 | `csrfCookiePath`         | `string`       | `'/auth/csrf-cookie'` | CSRF cookie endpoint path                                                   |
+| `maxLoginAttempts`       | `int`          | `5`                   | Max failed `Login` attempts per key before throttling                       |
+| `loginDecaySeconds`      | `int`          | `60`                  | Throttle window for failed `Login` attempts                                 |
 | `middlewares`            | `array`        | *(see below)*         | Overridable middleware classes                                              |
 | `extractToken`           | `?Closure`     | `bearerToken()`       | Custom token extraction from request                                        |
 | `validateToken`          | `?Closure`     | `fn () => true`       | Custom token validation callback                                            |
@@ -376,7 +381,7 @@ Default middleware:
 | Key                    | Default Class                                           |
 | ---------------------- | ------------------------------------------------------- |
 | `encrypt_cookies`      | `Illuminate\Cookie\Middleware\EncryptCookies`           |
-| `validate_csrf_token`  | `Illuminate\Foundation\Http\Middleware\VerifyCsrfToken` |
+| `validate_csrf_token`  | `Illuminate\Foundation\Http\Middleware\PreventRequestForgery` |
 | `authenticate_session` | `Deplox\Shield\Middlewares\AuthenticateSession`         |
 
 ## Token Pruning
@@ -481,8 +486,98 @@ Shield validates that `userModel` implements `OwnsTokens`, so both modes pass va
 | ----------------------------------------- | --------------------------------------------- | ---------------------------------------------------- |
 | `Illuminate\Auth\Events\Attempting`       | Before token lookup                           | `guard: 'dynamic'`, `credentials: ['token' => ...]`  |
 | `Deplox\Shield\Events\TokenAuthenticated` | After successful bearer auth                  | `token: Model&IsAuthToken`                           |
+| `Deplox\Shield\Events\TokenRevoked`       | After a token is intentionally revoked        | `token`, `user`, `reason: TokenRevocationReason`     |
+| `Deplox\Shield\Events\FailedLogin`        | After a failed `Login` action attempt         | `field`, `identifier`, `ip` — never the password     |
 | `Illuminate\Auth\Events\Login`            | After any successful auth (session or bearer) | `guard: 'dynamic'`, `user`, `remember: false`        |
 | `Illuminate\Auth\Events\Failed`           | After failed auth attempt                     | `guard: 'dynamic'`, `user` (if found), `credentials` |
+
+## Password Reset & Email Verification
+
+Shield includes opt-in actions, controllers, and route helpers for password reset and email verification. Wire up the controllers via `Shield::registerPasswordResetRoutes()` / `Shield::registerEmailVerificationRoutes()`, or call the actions directly from your own controllers.
+
+### Route helpers
+
+```php
+use Deplox\Shield\Shield;
+
+// In AppServiceProvider::boot(), after configuring Shield:
+Shield::registerPasswordResetRoutes();          // POST /password/email, POST /password/reset
+Shield::registerEmailVerificationRoutes();      // POST /email/verification-notification, GET /email/verify/{id}/{hash}
+
+// Customise prefix and middleware groups:
+Shield::registerPasswordResetRoutes(prefix: 'auth/password', middleware: ['api']);
+Shield::registerEmailVerificationRoutes(prefix: 'auth/email', middleware: ['api']);
+```
+
+The verify route is protected by Laravel's signed-URL middleware automatically. The "send verification" route requires `auth:dynamic` so only authenticated users can re-trigger it.
+
+### Actions
+
+| Action                  | Returns | Notes                                                                                         |
+| ----------------------- | ------- | --------------------------------------------------------------------------------------------- |
+| `SendPasswordReset`     | `string` (broker status) | Validates `email`, delegates to the password broker. Throws `ValidationException` on bad input. |
+| `ResetPassword`         | `string` (broker status) | Validates `email`, `password` (`confirmed`, `min:8`), `token`. Dispatches `PasswordReset`.   |
+| `SendEmailVerification` | `bool`   | Rate-limited per user-id + IP (default: 6 attempts / hour). Returns `false` if already verified. |
+| `VerifyEmail`           | `bool`   | Validates the SHA1 hash matches the user's email. Dispatches `Verified` on success.            |
+
+```php
+use Deplox\Shield\Actions\SendPasswordReset;
+
+$status = app(SendPasswordReset::class)(['email' => $request->email]);
+
+return match ($status) {
+    'passwords.sent' => response()->json(['ok' => true]),
+    default          => abort(400, $status),
+};
+```
+
+The default controllers (`SendPasswordResetController`, `ResetPasswordController`, `SendEmailVerificationController`, `VerifyEmailController`) are thin wrappers around these actions and are wired up by the route helpers above. Use them as references for building your own.
+
+## Additional middleware
+
+| Middleware             | Purpose                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------ |
+| `DenyAuthenticated`    | Inverse of `auth` — rejects already-authenticated requests with `403`. Useful for routes like `POST /register` that should only accept guests. |
+| `ResolveCurrentUser`   | Substitutes the route parameter `'me'` with the authenticated user. Lets `/users/{user}` accept `/users/me` for "current user" semantics. |
+
+```php
+Route::middleware(['auth:dynamic', ResolveCurrentUser::class])
+    ->get('/users/{user}', UserController::class);
+
+// /users/me  → resolves {user} to $request->user()
+// /users/abc → resolves {user} via the route binding as usual
+```
+
+## Token policy
+
+`Deplox\Shield\Policies\TokenPolicy` ships ready to gate token CRUD by ownership. Register it in your `AuthServiceProvider`:
+
+```php
+protected $policies = [
+    Token::class => \Deplox\Shield\Policies\TokenPolicy::class,
+];
+```
+
+Then use `$this->authorize('delete', $token)` in controllers. The policy methods (`view`, `update`, `delete`) check `$user->id === $token->getOwnerKey()`.
+
+## Listener: `RevokeTokensOnPasswordReset`
+
+When `revokeOnPasswordChange` is `Bearer` (default) or `All`, Shield registers a listener for Laravel's `PasswordReset` event that revokes the user's tokens (and dispatches `TokenRevoked` events with reason `PasswordReset`). Set `revokeOnPasswordChange: RevokeOnPasswordChange::None` on the `Shield` constructor if you want to handle revocation yourself.
+
+## Enums
+
+| Enum                        | Cases                                                  | Used by                                          |
+| --------------------------- | ------------------------------------------------------ | ------------------------------------------------ |
+| `TokenType`                 | `Bearer`, `Remember`                                   | Token model `type` cast, length resolution       |
+| `TokenLimitBehavior`        | `Reject`, `PruneOldest`                                | `Shield::$onTokenLimit`                          |
+| `RevokeOnPasswordChange`    | `All`, `Bearer`, `None`                                | `Shield::$revokeOnPasswordChange`                |
+| `TokenRevocationReason`     | `Logout`, `LogoutAll`, `PasswordReset`                 | `TokenRevoked` event payload                     |
+
+## Exceptions
+
+| Exception                       | Thrown when                                                                                  |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| `TokenLimitExceededException`   | A user attempts to create a token while at the `maxTokensPerUser` cap, with `onTokenLimit: Reject`. |
 
 ## Testing
 
