@@ -40,15 +40,15 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:deplox/laravel-shield.git"
+            "url": "https://github.com/deplox/laravel-shield.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:deplox/laravel-support.git"
+            "url": "https://github.com/deplox/laravel-support.git"
         },
         {
             "type": "vcs",
-            "url": "git@github.com:deplox/laravel-essentials.git"
+            "url": "https://github.com/deplox/laravel-essentials.git"
         }
     ],
     "autoload": {
@@ -89,7 +89,7 @@
             "@composer config repositories.deplox-shield path .deplox-link/laravel-shield",
             "@composer config repositories.deplox-support path .deplox-link/laravel-support",
             "@composer config repositories.deplox-essentials path .deplox-link/laravel-essentials",
-            "@composer require deplox/laravel-shield:* deplox/laravel-support:* deplox/laravel-essentials:* --no-update",
+            "@composer require deplox/laravel-shield:@dev deplox/laravel-support:@dev deplox/laravel-essentials:@dev --no-update",
             "@composer update deplox/laravel-shield deplox/laravel-support deplox/laravel-essentials"
         ],
         "use-released-deplox": [

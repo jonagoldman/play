@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6e09b7ae32e09c6a9945531a9fdb8110",
+    "content-hash": "44d90185b16fe74f2496733cfda92479",
     "packages": [
         {
             "name": "brick/math",
@@ -140,7 +140,7 @@
             "version": "v0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/deplox/laravel-essentials.git",
+                "url": "git@github.com:deplox/laravel-essentials.git",
                 "reference": "47742fe62fdc53e417587092914cf0ecf3c5bcbb"
             },
             "dist": {
@@ -176,10 +176,6 @@
                 }
             ],
             "description": "Opinionated defaults for Laravel projects.",
-            "support": {
-                "source": "https://github.com/deplox/laravel-essentials/tree/v0.1.0",
-                "issues": "https://github.com/deplox/laravel-essentials/issues"
-            },
             "time": "2026-05-04T13:43:18+00:00"
         },
         {
@@ -187,7 +183,7 @@
             "version": "v0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/deplox/laravel-shield.git",
+                "url": "git@github.com:deplox/laravel-shield.git",
                 "reference": "ab15a1a20d66797164da35d2666e378d0363b55b"
             },
             "dist": {
@@ -224,10 +220,6 @@
                 }
             ],
             "description": "Opinionated auth for Laravel projects.",
-            "support": {
-                "source": "https://github.com/deplox/laravel-shield/tree/v0.1.0",
-                "issues": "https://github.com/deplox/laravel-shield/issues"
-            },
             "time": "2026-05-04T13:43:18+00:00"
         },
         {
@@ -235,7 +227,7 @@
             "version": "v0.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/deplox/laravel-support.git",
+                "url": "git@github.com:deplox/laravel-support.git",
                 "reference": "e88b42bbbd2d25055b423eeb40b2399f689df79c"
             },
             "dist": {
@@ -271,10 +263,6 @@
                 }
             ],
             "description": "Opinionated support for Laravel projects.",
-            "support": {
-                "source": "https://github.com/deplox/laravel-support/tree/v0.1.0",
-                "issues": "https://github.com/deplox/laravel-support/issues"
-            },
             "time": "2026-05-04T13:43:18+00:00"
         },
         {
