@@ -180,21 +180,27 @@
         },
         {
             "name": "deplox/laravel-shield",
-            "version": "v0.1.0",
+            "version": "v0.1.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:deplox/laravel-shield.git",
-                "reference": "ab15a1a20d66797164da35d2666e378d0363b55b"
+                "reference": "055057fca32f8596806be7b424cb4d3257105002"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/deplox/laravel-shield/zipball/ab15a1a20d66797164da35d2666e378d0363b55b",
-                "reference": "ab15a1a20d66797164da35d2666e378d0363b55b",
+                "url": "https://api.github.com/repos/deplox/laravel-shield/zipball/055057fca32f8596806be7b424cb4d3257105002",
+                "reference": "055057fca32f8596806be7b424cb4d3257105002",
                 "shasum": ""
             },
             "require": {
+                "deplox/laravel-support": "^0.1",
                 "laravel/framework": "^13.0",
                 "php": "^8.4"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^11.0",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0"
             },
             "type": "library",
             "extra": {
@@ -210,6 +216,16 @@
                     "Deplox\\Shield\\Database\\Factories\\": "database/factories/"
                 }
             },
+            "autoload-dev": {
+                "psr-4": {
+                    "Deplox\\Shield\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "pest"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -220,7 +236,7 @@
                 }
             ],
             "description": "Opinionated auth for Laravel projects.",
-            "time": "2026-05-04T13:43:18+00:00"
+            "time": "2026-05-04T14:11:40+00:00"
         },
         {
             "name": "deplox/laravel-support",
