@@ -1,0 +1,4 @@
+services:
+  web:
+    volumes:
+      - "${HOME}/Code/deplox:/var/www/html/.deplox-link:cached"

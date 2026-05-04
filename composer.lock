@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3b09481a55180f7873c8e77c03d049b",
+    "content-hash": "6e09b7ae32e09c6a9945531a9fdb8110",
     "packages": [
         {
             "name": "brick/math",
@@ -137,14 +137,20 @@
         },
         {
             "name": "deplox/laravel-essentials",
-            "version": "dev-master",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deplox/laravel-essentials.git",
+                "reference": "47742fe62fdc53e417587092914cf0ecf3c5bcbb"
+            },
             "dist": {
-                "type": "path",
-                "url": "packages/deplox/laravel-essentials",
-                "reference": "e5105cbfa63f2c906fb26049822ff9f8f9fc2771"
+                "type": "zip",
+                "url": "https://api.github.com/repos/deplox/laravel-essentials/zipball/47742fe62fdc53e417587092914cf0ecf3c5bcbb",
+                "reference": "47742fe62fdc53e417587092914cf0ecf3c5bcbb",
+                "shasum": ""
             },
             "require": {
-                "laravel/framework": "dev-13.x-opinionated as 13.7.0",
+                "laravel/framework": "^13.0",
                 "php": "^8.4"
             },
             "type": "library",
@@ -170,21 +176,28 @@
                 }
             ],
             "description": "Opinionated defaults for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/deplox/laravel-essentials/tree/v0.1.0",
+                "issues": "https://github.com/deplox/laravel-essentials/issues"
+            },
+            "time": "2026-05-04T13:43:18+00:00"
         },
         {
             "name": "deplox/laravel-shield",
-            "version": "dev-master",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deplox/laravel-shield.git",
+                "reference": "ab15a1a20d66797164da35d2666e378d0363b55b"
+            },
             "dist": {
-                "type": "path",
-                "url": "packages/deplox/laravel-shield",
-                "reference": "c0e30593ac66adb48fa9ff53f81e175045a355d3"
+                "type": "zip",
+                "url": "https://api.github.com/repos/deplox/laravel-shield/zipball/ab15a1a20d66797164da35d2666e378d0363b55b",
+                "reference": "ab15a1a20d66797164da35d2666e378d0363b55b",
+                "shasum": ""
             },
             "require": {
-                "laravel/framework": "dev-13.x-opinionated as 13.7.0",
+                "laravel/framework": "^13.0",
                 "php": "^8.4"
             },
             "type": "library",
@@ -211,21 +224,28 @@
                 }
             ],
             "description": "Opinionated auth for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/deplox/laravel-shield/tree/v0.1.0",
+                "issues": "https://github.com/deplox/laravel-shield/issues"
+            },
+            "time": "2026-05-04T13:43:18+00:00"
         },
         {
             "name": "deplox/laravel-support",
-            "version": "dev-master",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/deplox/laravel-support.git",
+                "reference": "e88b42bbbd2d25055b423eeb40b2399f689df79c"
+            },
             "dist": {
-                "type": "path",
-                "url": "packages/deplox/laravel-support",
-                "reference": "77c57a9e53f18fde8c719121bb21c9b6f1cf3b1d"
+                "type": "zip",
+                "url": "https://api.github.com/repos/deplox/laravel-support/zipball/e88b42bbbd2d25055b423eeb40b2399f689df79c",
+                "reference": "e88b42bbbd2d25055b423eeb40b2399f689df79c",
+                "shasum": ""
             },
             "require": {
-                "laravel/framework": "dev-13.x-opinionated as 13.7.0",
+                "laravel/framework": "^13.0",
                 "php": "^8.4"
             },
             "type": "library",
@@ -251,10 +271,11 @@
                 }
             ],
             "description": "Opinionated support for Laravel projects.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/deplox/laravel-support/tree/v0.1.0",
+                "issues": "https://github.com/deplox/laravel-support/issues"
+            },
+            "time": "2026-05-04T13:43:18+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -9983,9 +10004,6 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "deplox/laravel-essentials": 20,
-        "deplox/laravel-shield": 20,
-        "deplox/laravel-support": 20,
         "laravel/framework": 20
     },
     "prefer-stable": true,

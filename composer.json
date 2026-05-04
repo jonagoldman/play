@@ -12,9 +12,9 @@
     ],
     "require": {
         "php": "^8.4",
-        "deplox/laravel-shield": "dev-master",
-        "deplox/laravel-essentials": "dev-master",
-        "deplox/laravel-support": "dev-master",
+        "deplox/laravel-essentials": "^0.1",
+        "deplox/laravel-shield": "^0.1",
+        "deplox/laravel-support": "^0.1",
         "laravel/framework": "dev-13.x-opinionated as 13.7.0",
         "laravel/tinker": "^3.0.2",
         "symfony/filesystem": "^8.0.1"
@@ -39,11 +39,16 @@
             "url": "https://github.com/deplox/laravel-framework"
         },
         {
-            "type": "path",
-            "url": "packages/*/*",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "git@github.com:deplox/laravel-shield.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:deplox/laravel-support.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:deplox/laravel-essentials.git"
         }
     ],
     "autoload": {
@@ -55,10 +60,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/",
-            "Deplox\\Shield\\Tests\\": "packages/deplox/laravel-shield/tests/",
-            "Deplox\\Support\\Tests\\": "packages/deplox/laravel-support/tests/",
-            "Deplox\\Essentials\\Tests\\": "packages/deplox/laravel-essentials/tests/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -81,6 +83,18 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "use-local-deplox": [
+            "@php -r \"copy('composer.json', 'composer.json.bak');\"",
+            "@composer config repositories.deplox-shield path .deplox-link/laravel-shield",
+            "@composer config repositories.deplox-support path .deplox-link/laravel-support",
+            "@composer config repositories.deplox-essentials path .deplox-link/laravel-essentials",
+            "@composer require deplox/laravel-shield:* deplox/laravel-support:* deplox/laravel-essentials:* --no-update",
+            "@composer update deplox/laravel-shield deplox/laravel-support deplox/laravel-essentials"
+        ],
+        "use-released-deplox": [
+            "@php -r \"if (file_exists('composer.json.bak')) { rename('composer.json.bak', 'composer.json'); } else { fwrite(STDERR, \\\"no composer.json.bak — restore manually with: git checkout composer.json composer.lock\\n\\\"); exit(1); }\"",
+            "@composer update deplox/laravel-shield deplox/laravel-support deplox/laravel-essentials"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
