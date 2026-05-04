@@ -12,14 +12,8 @@
     ],
     "require": {
         "php": "^8.4",
-        "laravel/framework": "dev-13.x-opinionated as 13.7.0"
+        "laravel/framework": "^13.0"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/deplox/laravel-framework"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Deplox\\Support\\": "src/"
