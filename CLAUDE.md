@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Laravel 13.x application using a custom opinionated framework fork (`deplox/laravel-framework`, branch `13.x-opinionated`). PHP 8.4, monorepo structure with three local packages in `packages/`. DDEV-based development environment (`play.ddev.site`).
+Laravel 13.x application using a custom opinionated framework fork (`deplox/laravel-framework`, branch `13.x-opinionated`). PHP 8.5. Consumes three external Composer packages from `github.com/deplox`. DDEV-based development environment (`play.ddev.site`).
 
 ## Common Commands
 
@@ -30,13 +30,21 @@ pnpm build                # Production build
 
 ## Architecture
 
-### Monorepo Packages (`packages/`)
+### deplox/* packages (external)
 
-Three local packages symlinked via Composer path repositories:
+Three Composer packages pulled from `github.com/deplox` via VCS repositories declared in `composer.json`. Pinned to `^0.1`:
 
 - **laravel-shield** (`deplox/laravel-shield`) — Token-based authentication with `Shield` as the central entry point (configuration, boot logic, token-prefix methods). `DynamicGuard` (session-first, bearer fallback), `AuthenticateToken` action, `TokenType` enum (`Bearer`, `Remember`). Provides `auth:dynamic` guard. Key trait: `HasTokens`. Namespace: `Deplox\Shield`.
 - **laravel-support** (`deplox/laravel-support`) — Eloquent concerns (`HasExpiration`, `HasSlugs`, `HasChildren/HasParent`, `InMemory`, `CanIncludeRelationships`), custom validation rules (`ExistsEloquent`, `UniqueEloquent`), password reset utilities. Namespace: `Deplox\Support`.
 - **laravel-essentials** (`deplox/laravel-essentials`) — Middleware (`UseRequestId`, `UseHeaderGuards`), database commands (`db:make`, `db:drop`), `Overseer` request inspection, `DogmaManager`, `EssentialsConfig`. Namespace: `Deplox\Essentials`.
+
+#### Local-dev workflow for the deplox packages
+
+Clones live at `~/Code/deplox/laravel-{shield,support,essentials}` and are bind-mounted into the DDEV web container at `/var/www/html/.deplox-link` via `.ddev/docker-compose.deplox.yaml`.
+
+- `ddev composer use-local-deplox` — switches `composer.json` to path repositories pointing at `.deplox-link/laravel-*` with `@dev` constraints. Edits in `~/Code/deplox/laravel-shield/src/...` show up live in `vendor/` (symlinked). Backs up the released-mode `composer.json` to `composer.json.bak`.
+- `ddev composer use-released-deplox` — restores `composer.json` from the backup and runs `composer update` so the packages return to their tagged release.
+- Cut a new release: tag `vX.Y.Z` in the package repo, push the tag, then `ddev composer require deplox/laravel-shield:^X.Y` in the consumer.
 
 ### Application Structure
 
@@ -166,13 +174,10 @@ Invalid includes are silently ignored (filtered via `array_intersect`).
 
 ## Testing
 
-- **Framework:** Pest 4 with `pest()->extend(TestCase::class)->in('Feature')`
-- **Database:** Each feature test file declares `uses(RefreshDatabase::class)` at the top
-- **Setup:** `beforeEach()` for shared state, `actingAs($user, 'dynamic')` for session auth
-- **Token auth:** `$this->withToken($token->plain, 'Bearer')`
-- **Factories:** `User::factory()->create()`, `Token::factory()->for($user)->create()`, states like `unverified()`
-- **Assertions:** `assertSuccessful()`, `assertUnprocessable()`, `assertJsonPath()`, `assertJsonStructure()`, `assertDatabaseHas()`, `assertJsonValidationErrors()`
-- **Organization:** `tests/Feature/` for HTTP/integration, `tests/Unit/` for architecture and isolated logic
+- Each feature test file declares `uses(RefreshDatabase::class)` at the top (no global `uses()` in `Pest.php`)
+- Session auth: `actingAs($user, 'dynamic')` (the `auth:dynamic` guard, not `web`)
+- Token auth: `$this->withToken($token->plain, 'Bearer')` — `$token->plain` is set during creation, not retrievable later
+- `tests/Unit/` is reserved for architecture tests and isolated logic; everything else goes in `tests/Feature/`
 
 ## Git
 
@@ -180,13 +185,8 @@ Invalid includes are silently ignored (filtered via `array_intersect`).
 
 ## Code Conventions
 
-- **`declare(strict_types=1)`** on every PHP file
-- **`final` classes** enforced by Pint
 - **ULID primary keys** on all models (`HasUlids` trait)
-- **Strict comparisons** (`===`/`!==` only)
-- **Multibyte string functions** (`mb_*` instead of `str*`)
-- **Immutable DateTime** (`DateTimeImmutable` over `DateTime`)
-- **Architecture tests** in `tests/Unit/ArchitectureTest.php` enforce `php`, `security`, and `laravel` presets
+- **Architecture tests** in `tests/Unit/ArchitectureTest.php` enforce `php`, `security`, and `laravel` presets (covers `strict_types`, strict comparisons, `mb_*`, `DateTimeImmutable`)
 - **Class element ordering** (enforced by Pint): use_trait → case → constants → properties → construct → destruct → magic → phpunit → abstract methods → public static → public → protected static → protected → private static → private
 
 ## Known Issues
